@@ -23,12 +23,23 @@ def prepare_dataset(
 
 def inference(model: ChatModel, predict_data: List[Dict], **input_kwargs):
     res = []
-    # test
-    # for item in predict_data[:20]:
-    for item in tqdm(predict_data, desc="Inference Progress", unit="item"):
-        print(f"item[input] \n{item['input']}")
-        response, _ = model.chat(query=item["input"], history=[], **input_kwargs)
-        res.append(response)
+    if model.data_args.predict_batch_size > 1:
+        for i in tqdm(
+            range(0, len(predict_data), model.data_args.predict_batch_size),
+            desc="Inference Progress",
+            unit="batch",
+        ):
+            batch = predict_data[i : i + model.data_args.predict_batch_size]
+            batch_input = [item["input"] for item in batch]
+            responses, _ = model.batch_chat(
+                queries=batch_input, history=[], **input_kwargs
+            )
+            res.extend(responses)
+    else:
+        for item in tqdm(predict_data, desc="Inference Progress", unit="item"):
+            print(f"item[input] \n{item['input']}")
+            response, _ = model.chat(query=item["input"], history=[], **input_kwargs)
+            res.append(response)
     return res
 
 
@@ -37,7 +48,6 @@ def predict(model: ChatModel):
     ## predict file can be give by param --predicted_input_filename ,output_file can be gived by param predicted_out_filename
     predict_data = prepare_dataset(args.predicted_input_filename)
     result = inference(model, predict_data)
-
     with open(args.predicted_out_filename, "w") as f:
         for p in result:
             try:

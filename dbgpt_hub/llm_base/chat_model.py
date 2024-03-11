@@ -105,6 +105,48 @@ class ChatModel:
         response_length = len(outputs)
         return response, (prompt_length, response_length)
 
+    def batch_chat(
+        self,
+        queries: List[str],
+        history: Optional[List[Tuple[str, str]]] = None,
+        system: Optional[str] = None,
+        **input_kwargs
+    ) -> List[str]:
+        gen_kwargs = {}
+        prompt_lengths = []
+        input_tensors = []
+        for query in queries:
+            gen_kwarg, prompt_length = self.process_args(
+                query, history, system, **input_kwargs
+            )
+            input_tensors.append(gen_kwarg["inputs"])
+            prompt_lengths.append(prompt_length)
+            if not gen_kwargs:
+                gen_kwargs = gen_kwarg
+
+        len_max = max([input_tensor.shape[1] for input_tensor in input_tensors])
+        n = len(input_tensors)
+
+        padded_input_tensors = torch.full(
+            (n, len_max), self.tokenizer.pad_token_id, dtype=input_tensors[0].dtype
+        ).to(self.model.device)
+        for i, input_tensor in enumerate(input_tensors):
+            start_index = len_max - input_tensor.shape[1]
+            padded_input_tensors[i, start_index:] = input_tensor[0]
+
+        gen_kwargs["inputs"] = padded_input_tensors
+        generation_outputs = self.model.generate(**gen_kwargs)
+
+        outputs = generation_outputs.tolist()
+        outputs = [
+            output[input_tensor.shape[1]:]
+            for output, input_tensor in zip(outputs, input_tensors)
+        ]
+        responses = self.tokenizer.batch_decode(outputs, skip_special_tokens=True)
+
+        response_lengths = [len(output) for output in outputs]
+        return responses, (prompt_lengths, response_lengths)
+
     @torch.inference_mode()
     def stream_chat(
         self,

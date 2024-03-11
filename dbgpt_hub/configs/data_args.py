@@ -66,6 +66,7 @@ class DataArguments:
     r"""
     Arguments pertaining to what data we are going to input our model for training and evaluation.
     """
+
     template: str = field(
         metadata={
             "help": "Which template to use for constructing prompts in training and inference."
@@ -168,6 +169,9 @@ class DataArguments:
     predicted_out_filename: Optional[str] = field(
         default="pred_sql.sql",
         metadata={"help": "Filename to save predicted outcomes"},
+    )
+    predict_batch_size: Optional[int] = field(
+        default=1, metadata={"help": "Batch size for prediction"}
     )
 
     def init_for_training(self):  # support mixing multiple datasets
