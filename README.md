@@ -604,6 +604,10 @@ Run the following command:
 ```bash
 poetry run python dbgpt_hub/eval/evaluation.py --plug_value --input Your_model_pred_file
 ```
+poetry run python dbgpt_hub/eval/evaluation.py --plug_value --input dbgpt_hub/output/pred/pred_codellama13B_20240312_1409.sql --gold dbgpt_hub/data/spider/dev_gold.sql --db dbgpt_hub/data/spider/database/ --table dbgpt_hub/data/spider/tables.json
+
+poetry run python dbgpt_hub/eval/evaluation.py --plug_value --input dbgpt_hub/output/pred/pred_codellama13B_20240314_1257.sql --gold dbgpt_hub/data/DuSQL/gold_dev.sql --db dbgpt_hub/data/DuSQL/database --table dbgpt_hub/data/DuSQL/db_schema.json
+
 You can find the results of our latest review and part of experiment results [here](docs/eval_llm_result.md)  
 **Note**: The database pointed to by the default code is a 95M database downloaded from [Spider official website] (https://yale-lily.github.io/spider). If you need to use Spider database (size 1.27G) in [test-suite](https://github.com/taoyds/test-suite-sql-eval), please download the database in the link to the custom directory first, and run the above evaluation command which add parameters and values ​​like `--db Your_download_db_path`.
 

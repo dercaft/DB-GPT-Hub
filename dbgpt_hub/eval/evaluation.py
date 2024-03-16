@@ -742,7 +742,7 @@ def evaluate(
             p, g = pg
             p_str = p[0]
             p_str = p_str.replace("value", "1")
-            g_str, db = g
+            qid, g_str, db = g # DuSQL需要这个格式
             db_name = db
             db = os.path.join(db_dir, db, db + ".sqlite")
             schema = Schema(get_schema(db))
@@ -1263,8 +1263,8 @@ if __name__ == "__main__":
     else:
         output_file_path = args.input
         # args.gold = "./eval/data/gold.txt"
-        args.gold = "./dbgpt_hub/data/eval_data/gold.txt"
-        args.table = "./dbgpt_hub/data/eval_data/tables.json"
+        # args.gold = "./dbgpt_hub/data/eval_data/gold.txt"
+        # args.table = "./dbgpt_hub/data/eval_data/tables.json"
     args.pred = output_file_path
 
     # only evaluating exact match needs this argument

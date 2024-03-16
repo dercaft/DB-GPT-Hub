@@ -5,7 +5,7 @@ pred_log="dbgpt_hub/output/logs/pred_test_${current_date}.log"
 start_time=$(date +%s)
 echo " Pred Start time: $(date -d @$start_time +'%Y-%m-%d %H:%M:%S')" >>${pred_log}
 
-CUDA_VISIBLE_DEVICES=4  python dbgpt_hub/predict/predict.py \
+CUDA_VISIBLE_DEVICES=7  python dbgpt_hub/predict/predict.py \
     --model_name_or_path codellama/CodeLlama-13b-Instruct-hf \
     --template llama2 \
     --finetuning_type none \

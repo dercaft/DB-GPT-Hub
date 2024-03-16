@@ -6,8 +6,8 @@ ROOT_PATH = os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__fi
 # ROOT_PATH = "/root/autodl-tmp"
 # MODELS_PARENT_PATH = "/home/model_files/codellama/"
 # DEFAULT_FT_MODEL_NAME = "CodeLlama-7b-Instruct-hf"
-MODELS_PARENT_PATH = "/home/model/"
-DEFAULT_FT_MODEL_NAME = "Baichuan2-13B-Chat"
+MODELS_PARENT_PATH = "/mnt/82_store/huggingface_cache/hub/"
+DEFAULT_FT_MODEL_NAME = "models--codellama--CodeLlama-7b-Instruct-hf"
 MODEL_PATH = os.path.join(MODELS_PARENT_PATH, DEFAULT_FT_MODEL_NAME)
 
 # MODEL_PATH = os.path.join(ROOT_PATH, "model")
@@ -47,15 +47,25 @@ EXT2TYPE = {"csv": "csv", "json": "json", "jsonl": "json", "txt": "text"}
 # TODO: BIRD \ WiKiSQL \ ...
 SQL_DATA_INFO = [
     {
-        "data_source": "spider",
-        "train_file": ["train_spider.json", "train_others.json"],
+        "data_source": "DuSQL",
+        "train_file": ["train.json"],
         "dev_file": ["dev.json"],
-        "train_tables_file": "tables.json",
-        "dev_tables_file": "tables.json",
+        "train_tables_file": "db_schema.json",
+        "dev_tables_file": "db_schema.json",
         "db_id_name": "db_id",
         "output_name": "query",
         "is_multiple_turn": False,
     }
+    # {
+    #     "data_source": "spider",
+    #     "train_file": ["train_spider.json", "train_others.json"],
+    #     "dev_file": ["dev.json"],
+    #     "train_tables_file": "tables.json",
+    #     "dev_tables_file": "tables.json",
+    #     "db_id_name": "db_id",
+    #     "output_name": "query",
+    #     "is_multiple_turn": False,
+    # }
     # {
     #     "data_source": "bird",
     #     "train_file": ["train/train.json"],
