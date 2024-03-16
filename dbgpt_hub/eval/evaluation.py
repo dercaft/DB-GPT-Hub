@@ -1263,8 +1263,8 @@ if __name__ == "__main__":
     else:
         output_file_path = args.input
         # args.gold = "./eval/data/gold.txt"
-        args.gold = "./dbgpt_hub/data/eval_data/gold.txt"
-        args.table = "./dbgpt_hub/data/eval_data/tables.json"
+        args.gold = "./dbgpt_hub/data/NL2SQL/gold_dev_1.sql"
+        args.table = "./dbgpt_hub/data/NL2SQL/db_schema.json"
     args.pred = output_file_path
 
     # only evaluating exact match needs this argument

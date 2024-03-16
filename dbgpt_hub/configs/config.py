@@ -46,16 +46,27 @@ EXT2TYPE = {"csv": "csv", "json": "json", "jsonl": "json", "txt": "text"}
 # text2sql dataset information for processing sql data
 # TODO: BIRD \ WiKiSQL \ ...
 SQL_DATA_INFO = [
+#    {
+#        "data_source": "spider",
+#        "train_file": ["train_spider.json", "train_others.json"],
+#        "dev_file": ["dev.json"],
+#        "train_tables_file": "tables.json",
+#        "dev_tables_file": "tables.json",
+#        "db_id_name": "db_id",
+#        "output_name": "query",
+#        "is_multiple_turn": False,
+#    }
     {
-        "data_source": "spider",
-        "train_file": ["train_spider.json", "train_others.json"],
-        "dev_file": ["dev.json"],
-        "train_tables_file": "tables.json",
-        "dev_tables_file": "tables.json",
+        "data_source": "NL2SQL",
+        "train_file": ["train.json"],
+        "dev_file": ["test.json"],
+        "train_tables_file": "db_schema.json",
+        "dev_tables_file": "db_schema.json",
         "db_id_name": "db_id",
         "output_name": "query",
         "is_multiple_turn": False,
     }
+    
     # {
     #     "data_source": "bird",
     #     "train_file": ["train/train.json"],
