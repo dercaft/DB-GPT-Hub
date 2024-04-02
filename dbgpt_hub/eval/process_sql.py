@@ -119,7 +119,7 @@ def get_schema(db):
 
     # fetch table info
     for table in tables:
-        cursor.execute("PRAGMA table_info({})".format(table))
+        cursor.execute("PRAGMA table_info(`{}`)".format(table))
         schema[table] = [str(col[1].lower()) for col in cursor.fetchall()]
 
     return schema
@@ -139,10 +139,24 @@ def get_schema_from_json(fpath):
 
 
 def tokenize(string):
-    string = str(string)
-    string = string.replace(
+    string2 = str(string)
+    string = string2.replace(
         "'", '"'
     )  # ensures all string values wrapped by "" problem??
+    import re
+    backtick_fragments = re.findall(r'\w+\.`[^`]+`', string)
+    replacements = {}
+    for fragment in backtick_fragments:
+        key = '__special_{}__'.format(len(replacements))
+        replacements[key] = fragment
+        string = string.replace(fragment, key)
+    backtick_fragments1 = re.findall(r'`[^`]+`', string)
+    replacements1 = {}
+    for fragment in backtick_fragments1:
+        key = '__special_{}__'.format(len(replacements1))
+        replacements1[key] = fragment
+        string = string.replace(fragment, key)
+
     quote_idxs = [idx for idx, char in enumerate(string) if char == '"']
     assert len(quote_idxs) % 2 == 0, "Unexpected quote"
 
@@ -156,7 +170,10 @@ def tokenize(string):
         string = string[:qidx1] + key + string[qidx2 + 1 :]
         vals[key] = val
 
-    toks = [word.lower() for word in word_tokenize(string)]
+    toks = [word for word in word_tokenize(string)]
+    toks = [replacements.get(tok, tok) for tok in toks]
+    toks = [replacements1.get(tok, tok) for tok in toks]
+    toks = [word.lower() for word in toks]
     # replace with string value token
     for i in range(len(toks)):
         if toks[i] in vals:
@@ -170,7 +187,6 @@ def tokenize(string):
         pre_tok = toks[eq_idx - 1]
         if pre_tok in prefix:
             toks = toks[: eq_idx - 1] + [pre_tok + "="] + toks[eq_idx + 1 :]
-
     return toks
 
 
@@ -196,14 +212,22 @@ def parse_col(toks, start_idx, tables_with_alias, schema, default_tables=None):
     :returns next idx, column id
     """
     tok = toks[start_idx]
+    if tok == "current_timestamp":
+        return start_idx + 1, "TIME_NOW"
     if tok == "*":
         return start_idx + 1, schema.idMap[tok]
 
+    if tok[0] == "`":
+        tok = tok[1:-1]
     if "." in tok:  # if token is a composite
         alias, col = tok.split(".")
-        key = tables_with_alias[alias] + "." + col
+        if col[0] == '`':
+            col = col[1:-1]
+        if tables_with_alias[alias][0] == '`':
+            key = tables_with_alias[alias][1:-1] + "." + col
+        else:
+            key = tables_with_alias[alias] + "." + col
         return start_idx + 1, schema.idMap[key]
-
     assert (
         default_tables is not None and len(default_tables) > 0
     ), "Default tables should not be None or empty"
@@ -223,36 +247,43 @@ def parse_col_unit(toks, start_idx, tables_with_alias, schema, default_tables=No
     """
     idx = start_idx
     len_ = len(toks)
-    isBlock = False
     isDistinct = False
-    if toks[idx] == "(":
-        isBlock = True
-        idx += 1
 
+    # Initialize col_unit as None, it will be a tuple (agg_id, col_id, isDistinct)
+    col_unit = None
+    # Initialize agg_id with 'none'
+    agg_id = AGG_OPS.index("none")
+
+    # Check if there is an aggregation function
     if toks[idx] in AGG_OPS:
         agg_id = AGG_OPS.index(toks[idx])
-        idx += 1
-        assert idx < len_ and toks[idx] == "("
-        idx += 1
-        if toks[idx] == "distinct":
-            idx += 1
-            isDistinct = True
-        idx, col_id = parse_col(toks, idx, tables_with_alias, schema, default_tables)
-        assert idx < len_ and toks[idx] == ")"
-        idx += 1
-        return idx, (agg_id, col_id, isDistinct)
+        idx += 1  # Skip aggregation function
+        assert toks[idx] == "("
+        idx += 1  # Skip '('
 
     if toks[idx] == "distinct":
         idx += 1
         isDistinct = True
-    agg_id = AGG_OPS.index("none")
-    idx, col_id = parse_col(toks, idx, tables_with_alias, schema, default_tables)
 
-    if isBlock:
+    # Check if there is an arithmetic operation
+    if idx + 1 < len(toks) and toks[idx+1] in UNIT_OPS[1:]:  # Exclude 'none' operation
+        # Parse the arithmetic operation (e.g., col1 / col2)
+        idx, col_unit1 = parse_col(toks, idx, tables_with_alias, schema, default_tables)
+        unit_op = UNIT_OPS.index(toks[idx])
+        idx += 1  # Skip the operator
+        idx, col_unit2 = parse_col(toks, idx, tables_with_alias, schema, default_tables)
+        col_unit = (unit_op, col_unit1, col_unit2)
+    else:
+        # Parse a single column
+        idx, col_id = parse_col(toks, idx, tables_with_alias, schema, default_tables)
+        col_unit = (UNIT_OPS.index("none"), col_id, None)
+
+    # Handle the closing of aggregation function
+    if agg_id != AGG_OPS.index("none"):
         assert toks[idx] == ")"
-        idx += 1  # skip ')'
+        idx += 1  # Skip ')'
 
-    return idx, (agg_id, col_id, isDistinct)
+    return idx, (agg_id, col_unit, isDistinct)
 
 
 def parse_val_unit(toks, start_idx, tables_with_alias, schema, default_tables=None):
@@ -290,6 +321,21 @@ def parse_table_unit(toks, start_idx, tables_with_alias, schema):
     """
     idx = start_idx
     len_ = len(toks)
+    if toks[idx] == "(":
+        idx += 1  # Skip '('
+        idx, sql = parse_sql(toks, idx, tables_with_alias, schema)
+        assert toks[idx] == ")", "Sub-query not properly closed with ')'"
+        idx += 1  # Skip ')'
+
+        if idx < len_ and toks[idx].lower() == "as":
+            alias = toks[idx + 1]
+            idx += 2  # Skip 'as' and alias
+        else:
+            alias = None
+
+        return idx, (TABLE_TYPE["sql"], sql), alias
+    if toks[idx][0] == '`':
+        toks[idx] = toks[idx][1:-1]
     key = tables_with_alias[toks[idx]]
 
     if idx + 1 < len_ and toks[idx + 1] == "as":
@@ -308,8 +354,11 @@ def parse_value(toks, start_idx, tables_with_alias, schema, default_tables=None)
     if toks[idx] == "(":
         isBlock = True
         idx += 1
-
-    if toks[idx] == "select":
+    if toks[idx] == "TIME_NOW":
+        # 使用适当的函数来获取当前时间，根据你的数据库类型进行调整
+        val = "CURRENT_TIMESTAMP"  # 例如，SQLite 和 PostgreSQL 可以使用 CURRENT_TIMESTAMP
+        idx += 1  # 跳过 TIME_NOW
+    elif toks[idx] == "select":
         idx, val = parse_sql(toks, idx, tables_with_alias, schema)
     elif '"' in toks[idx]:  # token is a string value
         val = toks[idx]
@@ -629,6 +678,10 @@ def load_data(fpath):
 
 
 def get_sql(schema, query):
+    # ifquery由select a.开头，直接返回
+    if query.startswith('select a.'):
+        return None
+
     toks = tokenize(query)
     tables_with_alias = get_tables_with_alias(schema.schema, toks)
     _, sql = parse_sql(toks, 0, tables_with_alias, schema)

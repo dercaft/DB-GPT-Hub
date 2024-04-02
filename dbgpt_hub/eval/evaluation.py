@@ -747,6 +747,8 @@ def evaluate(
             db = os.path.join(db_dir, db, db + ".sqlite")
             schema = Schema(get_schema(db))
             g_sql = get_sql(schema, g_str)
+            if g_sql is None:
+                continue
             hardness = evaluator.eval_hardness(g_sql)
             if idx > 3:
                 idx = "> 4"
@@ -759,6 +761,8 @@ def evaluate(
 
             try:
                 p_sql = get_sql(schema, p_str)
+                if p_sql is None:
+                    continue
             except:
                 # If p_sql is not valid, then we will use an empty sql to evaluate with the correct sql
                 p_sql = {
@@ -1105,8 +1109,8 @@ def rebuild_sql_col(valid_col_units, sql, kmap):
 
 
 def build_foreign_key_map(entry):
-    cols_orig = entry["column_names_original"]
-    tables_orig = entry["table_names_original"]
+    cols_orig = entry["column_names"]
+    tables_orig = entry["table_names"]
 
     # rebuild cols corresponding to idmap in Schema
     cols = []
@@ -1219,7 +1223,7 @@ if __name__ == "__main__":
         "--etype",
         dest="etype",
         type=str,
-        default="exec",
+        default="all",
         help="evaluation type, exec for test suite accuracy, match for the original exact set match accuracy",
         choices=("all", "exec", "match"),
     )

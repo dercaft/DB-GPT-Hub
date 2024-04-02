@@ -1,0 +1,3075 @@
+index: 4
+db_id: 教材辅助参考书
+extra pred: select 名称 , 类型 from 参考书 where 类型 != '试卷'
+extra gold: select 名称 , 类型 from 参考书 where 词条id not in ( select 试卷id from 参考试卷 )
+
+index: 12
+db_id: 友好城市
+extra pred: select 城市 , 所属省 from 城市 where 词条id not in ( select 贫困城市id from 对口帮扶城市 )
+extra gold: select 城市 , 所属省份 from 城市 where 词条id not in ( select 贫困城市id from 对口帮扶城市 )
+
+index: 13
+db_id: 友好城市
+extra pred: select 城市 , 所属省 from 城市 where 词条id not in ( select 贫困城市id from 对口帮扶城市 )
+extra gold: select 城市 , 所属省份 from 城市 where 词条id not in ( select 帮助城市id from 对口帮扶城市 )
+
+index: 15
+db_id: 奥运会参赛队伍
+extra pred: select T2.名称 , T2.所属洲 from `2008北京奥运会奖牌榜` as T1 join 国家 as T2 on T1.国家id == T2.词条id
+extra gold: select 名称 , 所属洲 from 国家 where 词条id not in ( select 国家id from `2008北京奥运会奖牌榜` )
+
+index: 17
+db_id: 欧洲杯球队
+extra pred: select 中文队名 , 所属地区 from 球队 where 词条id not in ( select 冠军球队id from 欧冠冠亚军 )
+extra gold: select 中文队名 , 所属地区 from 球队 where 词条id not in ( select 亚军球队id from 欧冠冠亚军 )
+
+index: 21
+db_id: 友好城市
+easy pred: select 城市 from 城市 where 词条id not in ( select 词条id from 对口帮扶城市 )
+easy gold: SELECT * FROM (SELECT * FROM ( select 城市id from 一带一路的中国城市 ) EXCEPT SELECT * FROM ( select 贫困城市id from 对口帮扶城市 ))
+
+index: 22
+db_id: 友好城市
+easy pred: select 贫困城市id from 对口帮扶城市
+easy gold: SELECT * FROM (SELECT * FROM ( select 贫困城市id from 对口帮扶城市 ) INTERSECT SELECT * FROM ( select 城市id from 一带一路的中国城市 ))
+
+index: 28
+db_id: 奥运会参赛队伍
+medium pred: select T2.名称 , T1.参赛国家数量 , T2.举办国家id from 夏季奥运会 as T1 join 国家 as T2 on T1.举办国家id == T2.词条id
+medium gold: select T1.名称 , T2.名称 , T1.参赛国家数量 from 夏季奥运会 as T1 join 国家 as T2 on T1.举办国家id = T2.词条id
+
+index: 30
+db_id: 奥运会参赛队伍
+medium pred: select T2.名称 , T1.参赛国家数量 , T2.举办国家id , T2.所属洲 from 夏季奥运会 as T1 join 国家 as T2 on T1.举办国家id == T2.词条id
+medium gold: select T1.名称 , T2.名称 , T1.参赛国家数量 , T2.所属洲 from 夏季奥运会 as T1 join 国家 as T2 on T1.举办国家id = T2.词条id
+
+index: 31
+db_id: 中国卫视频道
+medium pred: select T3.名称 , T2.名称 , T2.隶属机构 , T1.出品公司 from 电视剧 as T1 join 电视台 as T2 join 电视剧 as T3 on T3.首播平台id == T2.词条id
+medium gold: select T1.名称 , T2.名称 , T1.出品公司 , T2.隶属机构 from 电视剧 as T1 join 电视台 as T2 on T1.首播平台id = T2.词条id
+
+index: 37
+db_id: 坚果
+medium pred: select T2.名称 , T1.含量 from 坚果中国人均消费 as T1 join 坚果 as T2 on T1.坚果id == T2.词条id
+medium gold: select T2.名称 , T2.饱和脂肪含量 from 坚果中国人均消费 as T1 join 坚果 as T2 on T1.坚果id = T2.词条id
+
+index: 38
+db_id: 教材辅助参考书
+medium pred: select T2.名称 , T2.类型 from 适用城市 as T1 join 参考书 as T2 on T1.参考试卷id == T2.词条 and T1.版本 == '大三' or T1.版本 == '大四'
+medium gold: select T2.名称 , T2.类型 from 参考试卷 as T1 join 参考书 as T2 on T1.试卷id = T2.词条id
+
+index: 39
+db_id: 教材辅助参考书
+medium pred: select T2.类型 , T2.适用阶段 from 适用城市 as T1 join 参考书 as T2 on T1.参考试卷id == T2.词条 and T1.版本 == '1' group by T1.参考试卷id
+medium gold: select T2.名称 , T2.适用年级 from 参考试卷 as T1 join 参考书 as T2 on T1.试卷id = T2.词条id
+
+index: 43
+db_id: 企业融资
+medium pred: select T2.法定代表人 from 企业融资 as T1 join 企业 as T2 on T1.企业id == T2.词条id
+medium gold: select T2.中文名 , T2.法定代表人 from 企业融资 as T1 join 企业 as T2 on T1.企业id = T2.词条id
+
+index: 45
+db_id: 友好城市
+medium pred: select T2.城市 , count ( * ) from 对口帮扶城市 as T1 join 城市 as T2 on T1.贫困城市id == T2.词条id group by T1.贫困城市id
+medium gold: select T2.城市 , T2.建交国家数量 from 对口帮扶城市 as T1 join 城市 as T2 on T1.贫困城市id = T2.词条id
+
+index: 46
+db_id: 洗衣机
+medium pred: select T2.名称 , T2.市场份额 from 洗衣机品牌门店 as T1 join 洗衣机品牌 as T2 on T1.品牌id == T2.词条id
+medium gold: select T2.名称 , T2.市场份额 from 洗衣机品牌平台评分 as T1 join 洗衣机品牌 as T2 on T1.品牌id = T2.词条id
+
+index: 47
+db_id: 打车软件
+medium pred: select T2.名称 , T2.理念 , sum ( T1.车数量 ) from 各打车APP支持的方式 as T1 join 打车方式 as T2 on T1.方式id == T2.词条id group by T1.方式id
+medium gold: select T3.名称 , T2.app名称 , T1.车数量 from 各打车APP支持的方式 as T1 join 打车APP as T2 join 打车方式 as T3 on T1.appid = T2.词条id and T1.方式id = T3.词条id
+
+index: 48
+db_id: 打车软件
+medium pred: select T2.名称 , T2.理念 , T1.车数量 from 各打车APP支持的方式 as T1 join 打车方式 as T2 on T1.方式id == T2.词条id
+medium gold: select T3.名称 , T3.理念 , T2.app名称 , T1.车数量 from 各打车APP支持的方式 as T1 join 打车APP as T2 join 打车方式 as T3 on T1.appid = T2.词条id and T1.方式id = T3.词条id
+
+index: 49
+db_id: 打车软件
+medium pred: select T2.名称 , T2.理念 , T1.车数量 , T2.每公里价格 from 各打车APP支持的方式 as T1 join 打车方式 as T2 on T1.方式id == T2.词条id
+medium gold: select T3.名称 , T3.每公里价格 , T2.app名称 , T1.车数量 from 各打车APP支持的方式 as T1 join 打车APP as T2 join 打车方式 as T3 on T1.appid = T2.词条id and T1.方式id = T3.词条id
+
+index: 51
+db_id: 中国卫视频道
+medium pred: select T3.名称 , T2.名称 , T2.出品时间 , T1.出品公司 from 电视剧收视 as T1 join 电视剧 as T2 join 电视台 as T3 on T1.电视剧id == T2.词条id and T1.平台id == T3.词条id
+medium gold: select T3.名称 , T2.名称 , T2.出品公司 , T1.时间段 from 电视剧收视 as T1 join 电视剧 as T2 join 电视台 as T3 on T1.电视剧id = T2.词条id and T1.平台id = T3.词条id
+
+index: 55
+db_id: 企业融资
+medium pred: select T2.法定代表人 , T1.中文名 from 投资公司 as T1 join 企业 as T2 on T1.企业id == T2.词条id
+medium gold: select T2.中文名 , T2.法定代表人 from 投资公司 as T1 join 企业 as T2 on T1.企业id = T2.词条id
+
+index: 57
+db_id: 企业融资
+medium pred: select T2.中文名 , T1.年份 , T2.注册资本 from 企业融资 as T1 join 企业 as T2 on T1.企业id == T2.词条id
+medium gold: select T2.中文名 , T2.注册资本 from 企业融资 as T1 join 企业 as T2 on T1.企业id = T2.词条id
+
+index: 58
+db_id: 购书平台
+medium pred: select T3.书名 , T3.作者 , T2.名称 , T1.电子书售价 from 电子书 as T1 join 图书 as T2 join 平台 as T3 on T1.书名id == T2.词条id and T1.平台id == T3.词条id
+medium gold: select T3.名称 , T2.书名 , T2.作者 , T1.电子书售价 from 电子书 as T1 join 图书 as T2 join 平台 as T3 on T1.书名id = T2.词条id and T1.平台id = T3.词条id
+
+index: 60
+db_id: 购书平台
+medium pred: select T3.书名 , T3.作者 , T2.名称 , T2.年营业额 from 电子书 as T1 join 平台 as T2 join 图书 as T3 on T1.平台id == T2.词条id and T1.书名id == T3.词条id
+medium gold: select T3.名称 , T3.年营业额 , T2.书名 , T1.电子书售价 from 电子书 as T1 join 图书 as T2 join 平台 as T3 on T1.书名id = T2.词条id and T1.平台id = T3.词条id
+
+index: 61
+db_id: CCTV中国经济年度人物
+medium pred: select T2.姓名 , T2.性别 , T1.名称 , T2.出生地 from 人物公司职位 as T1 join 企业人物 as T2 on T1.人物id == T2.词条id
+medium gold: select T3.名称 , T2.姓名 , T2.性别 , T1.职位 from 人物公司职位 as T1 join 企业人物 as T2 join 公司 as T3 on T1.人物id = T2.词条id and T1.公司id = T3.词条id
+
+index: 64
+db_id: CCTV中国经济年度人物
+medium pred: select T2.姓名 , T2.年龄 , T1.名称 , T1.职位 from 人物公司职位 as T1 join 企业人物 as T2 on T1.人物id == T2.词条id
+medium gold: select T3.名称 , T2.姓名 , T2.年龄 , T1.职位 from 人物公司职位 as T1 join 企业人物 as T2 join 公司 as T3 on T1.人物id = T2.词条id and T1.公司id = T3.词条id
+
+index: 81
+db_id: 洗衣机
+medium pred: select T2.名称 , T2.所属公司 , T1.城市 from 洗衣机品牌门店 as T1 join 洗衣机品牌 as T2 on T1.品牌id == T2.词条id group by T1.品牌id having count ( * ) < 500
+medium gold: select T2.名称 , T2.所属公司 , T1.城市 from 洗衣机品牌门店 as T1 join 洗衣机品牌 as T2 on T1.品牌id = T2.词条id where T1.门店数量 < 500
+
+index: 83
+db_id: 洗衣机
+medium pred: select T2.名称 , T2.市场份额 , T1.城市 from 洗衣机品牌门店 as T1 join 洗衣机品牌 as T2 on T1.品牌id == T2.词条id group by T1.品牌id having count ( * ) >= 500
+medium gold: select T2.名称 , T2.市场份额 , T1.城市 from 洗衣机品牌门店 as T1 join 洗衣机品牌 as T2 on T1.品牌id = T2.词条id where T1.门店数量 >= 500
+
+index: 84
+db_id: 洗衣机
+medium pred: select T2.名称 , T2.市场份额 , T1.城市 from 洗衣机品牌门店 as T1 join 洗衣机品牌 as T2 on T1.品牌id == T2.词条id group by T1.品牌id having count ( * ) < 500
+medium gold: select T2.名称 , T2.市场份额 , T1.城市 from 洗衣机品牌门店 as T1 join 洗衣机品牌 as T2 on T1.品牌id = T2.词条id where T1.门店数量 < 500
+
+index: 112
+db_id: 运动员比赛记录
+extra pred: select T2.中文名 , T2.场上位置 , T1.赛季 from 比赛记录 as T1 join 篮球运动员 as T2 on T1.球员id == T2.词条id where T2.年龄 >= 25 group by T1.球员id having count ( * ) >= 40
+extra gold: select T2.中文名 , T2.场上位置 , T1.赛季 from 比赛记录 as T1 join 篮球运动员 as T2 on T1.球员id = T2.词条id where T1.出场次数 >= 40 and T2.年龄 > 25
+
+index: 125
+db_id: 洗衣机
+extra pred: select T2.名称 , T2.所属公司 , T1.城市 from 洗衣机品牌门店 as T1 join 洗衣机品牌 as T2 on T1.品牌id == T2.词条id where T1.门店数量 > 500 and T1.市场份额 >= 0.1
+extra gold: select T2.名称 , T2.所属公司 , T1.城市 from 洗衣机品牌门店 as T1 join 洗衣机品牌 as T2 on T1.品牌id = T2.词条id where T1.门店数量 > 500 and T2.市场份额 >= 0.102
+
+index: 126
+db_id: 洗衣机
+extra pred: select T2.名称 , T2.所属公司 , T1.城市 from 洗衣机品牌门店 as T1 join 洗衣机品牌 as T2 on T1.品牌id == T2.词条id where T1.门店数量 > 500 and T1.市场份额 <= 0.102
+extra gold: select T2.名称 , T2.所属公司 , T1.城市 from 洗衣机品牌门店 as T1 join 洗衣机品牌 as T2 on T1.品牌id = T2.词条id where T1.门店数量 > 500 and T2.市场份额 <= 0.102
+
+index: 130
+db_id: 洗衣机
+extra pred: select T2.名称 , T2.所属公司 , T1.城市 from 洗衣机品牌门店 as T1 join 洗衣机品牌 as T2 on T1.品牌id == T2.词条id where T1.门店数量 >= 500 and T1.售卖量 / T1.市场份额 >= 0.102
+extra gold: select T2.名称 , T2.所属公司 , T1.城市 from 洗衣机品牌门店 as T1 join 洗衣机品牌 as T2 on T1.品牌id = T2.词条id where T1.门店数量 >= 500 and T2.市场份额 >= 0.102
+
+index: 132
+db_id: 洗衣机
+extra pred: select T2.名称 , T2.所属公司 , T1.城市 from 洗衣机品牌门店 as T1 join 洗衣机品牌 as T2 on T1.品牌id == T2.词条id where T1.门店数量 < 500 and T1.市场份额 < 0.1
+extra gold: select T2.名称 , T2.所属公司 , T1.城市 from 洗衣机品牌门店 as T1 join 洗衣机品牌 as T2 on T1.品牌id = T2.词条id where T1.门店数量 > 500 and T2.市场份额 < 0.102
+
+index: 135
+db_id: 企业融资
+extra pred: select T2.中文名 , T1.法定代表人 , T1.融资轮次 from 企业融资 as T1 join 企业 as T2 on T1.企业id == T2.词条id where T1.融资总额 > 1000000000 and T2.注册资本 >= 1000000
+extra gold: select T2.中文名 , T2.法定代表人 , T1.融资轮次 from 企业融资 as T1 join 企业 as T2 on T1.企业id = T2.词条id where T1.融资总额 > 1000000000 and T2.注册资本 >= 1000000
+
+index: 141
+db_id: 企业融资
+extra pred: select T2.中文名 , T1.融资轮次 , T1.法定代表人 from 企业融资 as T1 join 企业 as T2 on T1.企业id == T2.词条id where T1.融资总额 > 100000000 and T2.注册资本 <= 1000000
+extra gold: select T2.中文名 , T2.法定代表人 , T1.融资轮次 from 企业融资 as T1 join 企业 as T2 on T1.企业id = T2.词条id where T1.融资总额 > 1000000000 and T2.注册资本 <= 1000000
+
+index: 143
+db_id: 坚果
+hard pred: select min ( T2.饱和脂肪含量 ) , min ( T1.人均摄入量 ) from 坚果摄入量 as T1 join 坚果 as T2 on T1.坚果id == T2.词条id where T1.全年占比 > 0.15 and T2.每100克热量 < 212000
+hard gold: select min ( T2.饱和脂肪含量 ) , min ( T1.营业收入 ) from 坚果季节性营业收入 as T1 join 坚果 as T2 on T1.坚果id = T2.词条id where T1.全年占比 > 0.15 and T2.每100克热量 < 212
+
+index: 151
+db_id: 购书平台
+hard pred: select sum ( T2.年营业额 ) , avg ( T1.售价 ) from 电子书 as T1 join 平台 as T2 on T1.平台id == T2.词条id where T1.购买人数 <= 100 and T2.会员费 >= 150
+hard gold: select sum ( T2.年营业额 ) , avg ( T1.电子书售价 ) from 电子书 as T1 join 平台 as T2 on T1.平台id = T2.词条id where T1.购买人数 <= 100 and T2.会员费 >= 150
+
+index: 158
+db_id: 购书平台
+hard pred: select T2.名称 , max ( T1.售价 ) , sum ( T1.售价 ) from 图书与平台 as T1 join 平台 as T2 on T1.平台id == T2.词条id where T1.购买人数 < 50000 and T2.会员费 < 150 group by T1.平台id
+hard gold: select max ( T2.年营业额 ) , sum ( T1.售价 ) from 图书与平台 as T1 join 平台 as T2 on T1.平台id = T2.词条id where T1.购买人数 < 50000 and T2.会员费 < 150
+
+index: 159
+db_id: 购书平台
+hard pred: select T2.名称 , max ( T1.售价 ) , max ( T1.购买人数 ) from 图书与平台 as T1 join 平台 as T2 on T1.平台id == T2.词条id where T1.评分人数 <= 1000 and T2.会员费 >= 150 group by T1.平台id
+hard gold: select max ( T2.年营业额 ) , max ( T1.售价 ) from 图书与平台 as T1 join 平台 as T2 on T1.平台id = T2.词条id where T1.评分人数 <= 1000 and T2.会员费 >= 150
+
+index: 160
+db_id: 坚果
+hard pred: select T2.名称 , avg ( T1.人均摄入量 ) , avg ( T2.饱和脂肪含量 ) from 坚果摄入量 as T1 join 坚果 as T2 on T1.坚果id == T2.词条id where T1.世界人均摄入量 >= 0.09 and T2.不饱和脂肪含量 >= 33 group by T1.坚果id
+hard gold: select avg ( T2.饱和脂肪含量 ) , sum ( T1.人均摄入量 ) from 坚果摄入量 as T1 join 坚果 as T2 on T1.坚果id = T2.词条id where T1.世界人均摄入量 >= 0.09 and T2.不饱和脂肪含量 >= 33
+
+index: 161
+db_id: 坚果
+hard pred: select T2.名称 , max ( T1.人均摄入量 ) , min ( T2.饱和脂肪含量 ) from 坚果摄入量 as T1 join 坚果 as T2 on T1.坚果id == T2.词条id where T1.世界人均摄入量 > 0.09 and T2.不饱和脂肪含量 <= 33 group by T1.坚果id
+hard gold: select max ( T2.饱和脂肪含量 ) , min ( T1.人均摄入量 ) from 坚果摄入量 as T1 join 坚果 as T2 on T1.坚果id = T2.词条id where T1.世界人均摄入量 > 0.09 and T2.不饱和脂肪含量 <= 33
+
+index: 163
+db_id: 坚果
+hard pred: select T2.名称 , min ( T1.人均摄入量 ) , min ( T2.饱和脂肪含量 ) from 坚果摄入量 as T1 join 坚果 as T2 on T1.坚果id == T2.词条id where T1.世界人均摄入量 <= 0.09 and T2.不饱和脂肪含量 > 33 group by T1.坚果id
+hard gold: select min ( T2.饱和脂肪含量 ) , max ( T1.人均摄入量 ) from 坚果摄入量 as T1 join 坚果 as T2 on T1.坚果id = T2.词条id where T1.世界人均摄入量 <= 0.09 and T2.不饱和脂肪含量 > 33
+
+index: 164
+db_id: 坚果
+hard pred: select T2.名称 , min ( T1.人均摄入量 ) , T2.饱和脂肪含量 from 坚果摄入量 as T1 join 坚果 as T2 on T1.坚果id == T2.词条id where T1.世界人均摄入量 <= 0.09 and T2.每100克热量 <= 212000 group by T1.坚果id
+hard gold: select min ( T2.饱和脂肪含量 ) , min ( T1.人均摄入量 ) from 坚果摄入量 as T1 join 坚果 as T2 on T1.坚果id = T2.词条id where T1.世界人均摄入量 <= 0.09 and T2.每100克热量 <= 212
+
+index: 165
+db_id: 坚果
+hard pred: select max ( T2.人均摄入量 ) , avg ( T1.饱和脂肪含量 ) from 坚果摄入量 as T1 join 坚果 as T2 on T1.坚果id == T2.词条id where T1.世界人均摄入量 >= 0.09 and T2.不饱和脂肪含量 > 33
+hard gold: select avg ( T2.饱和脂肪含量 ) , max ( T1.人均摄入量 ) from 坚果摄入量 as T1 join 坚果 as T2 on T1.坚果id = T2.词条id where T1.世界人均摄入量 >= 0.09 and T2.不饱和脂肪含量 > 33
+
+index: 167
+db_id: 洗衣机
+hard pred: select T2.名称 , sum ( T1.售卖量 ) , sum ( T2.市场份额 ) , sum ( T1.门店数量 ) from 洗衣机品牌门店 as T1 join 洗衣机品牌 as T2 on T1.品牌id == T2.词条id where T1.售卖量 < 5000000 and T2.`2018年利润` <= 150000000000 group by T1.品牌id
+hard gold: select sum ( T2.市场份额 ) , sum ( T1.门店数量 ) from 洗衣机品牌门店 as T1 join 洗衣机品牌 as T2 on T1.品牌id = T2.词条id where T1.售卖量 < 5000000 and T2.`2018年利润` <= 15000000000
+
+index: 168
+db_id: 洗衣机
+hard pred: select T2.名称 , min ( T1.市场份额 ) , sum ( T1.门店数量 ) from 洗衣机品牌门店 as T1 join 洗衣机品牌 as T2 on T1.品牌id == T2.词条id where T1.售卖量 > 5000000 and T2.`2018年营业额` <= 200700000000 group by T1.品牌id
+hard gold: select min ( T2.市场份额 ) , sum ( T1.门店数量 ) from 洗衣机品牌门店 as T1 join 洗衣机品牌 as T2 on T1.品牌id = T2.词条id where T1.售卖量 > 5000000 and T2.`2018年营业额` <= 200700000000
+
+index: 169
+db_id: 洗衣机
+hard pred: select T2.名称 , sum ( T1.售卖量 ) , max ( T2.市场份额 ) from 洗衣机品牌门店 as T1 join 洗衣机品牌 as T2 on T1.品牌id == T2.词条id where T1.售卖量 <= 5000000 and T2.`2018年营业额` >= 200700000000 group by T1.品牌id
+hard gold: select sum ( T2.市场份额 ) , max ( T1.门店数量 ) from 洗衣机品牌门店 as T1 join 洗衣机品牌 as T2 on T1.品牌id = T2.词条id where T1.售卖量 <= 5000000 and T2.`2018年营业额` >= 200700000000
+
+index: 171
+db_id: 洗衣机
+hard pred: select T2.名称 , sum ( T1.市场份额 ) , min ( T1.门店数量 ) from 洗衣机品牌门店 as T1 join 洗衣机品牌 as T2 on T1.品牌id == T2.词条id where T1.售卖量 <= 5000000 and T2.`2018年利润` > 150000000000 group by T1.品牌id
+hard gold: select sum ( T2.市场份额 ) , min ( T1.门店数量 ) from 洗衣机品牌门店 as T1 join 洗衣机品牌 as T2 on T1.品牌id = T2.词条id where T1.售卖量 <= 5000000 and T2.`2018年利润` > 15000000000
+
+index: 173
+db_id: 打车软件
+hard pred: select min ( T2.车数量 ) , min ( T1.覆盖城市数 ) from 各打车APP支持的方式 as T1 join 打车APP as T2 on T1.appid == T2.词条id where T1.市场份额 >= 0.1 and T2.服务用户数量 >= 10000000
+hard gold: select min ( T2.覆盖城市数 ) , min ( T1.车数量 ) from 各打车APP支持的方式 as T1 join 打车APP as T2 on T1.appid = T2.词条id where T1.市场份额 >= 0.1 and T2.服务用户数量 >= 10000000
+
+index: 176
+db_id: 打车软件
+hard pred: select max ( T2.车数量 ) , avg ( T1.覆盖城市数 ) from 各打车APP支持的方式 as T1 join 打车APP as T2 on T1.appid == T2.词条id where T1.每日营收 <= 100000 and T2.服务用户数量 < 10000000
+hard gold: select avg ( T2.覆盖城市数 ) , max ( T1.车数量 ) from 各打车APP支持的方式 as T1 join 打车APP as T2 on T1.appid = T2.词条id where T1.每日营收 <= 100000 and T2.服务用户数量 < 10000000
+
+index: 177
+db_id: 打车软件
+hard pred: select sum ( T2.车数量 ) , sum ( T1.覆盖城市数 ) from 各打车APP支持的方式 as T1 join 打车APP as T2 on T1.appid == T2.词条id where T1.市场份额 >= 0.1 and T2.服务用户数量 >= 10000000
+hard gold: select sum ( T2.覆盖城市数 ) , avg ( T1.车数量 ) from 各打车APP支持的方式 as T1 join 打车APP as T2 on T1.appid = T2.词条id where T1.市场份额 >= 0.1 and T2.服务用户数量 >= 10000000
+
+index: 178
+db_id: 坚果
+hard pred: select T2.名称 , min ( T1.含量 ) , max ( T2.消费次数 ) from 坚果中国人均消费 as T1 join 坚果 as T2 on T1.坚果id == T2.词条id where T2.不饱和脂肪含量 <= 33 and T1.占比 >= 0.02 group by T1.坚果id
+hard gold: select min ( T2.饱和脂肪含量 ) , max ( T1.消费次数 ) from 坚果中国人均消费 as T1 join 坚果 as T2 on T1.坚果id = T2.词条id where T1.占比 >= 0.02 and T2.不饱和脂肪含量 <= 33
+
+index: 179
+db_id: 坚果
+hard pred: select T2.名称 , max ( T1.饱和脂肪含量 ) , min ( T2.消费次数 ) from 坚果中国人均消费 as T1 join 坚果 as T2 on T1.坚果id == T2.词条id where T1.占比 <= 0.02 and T2.不饱和脂肪含量 > 33 group by T1.坚果id
+hard gold: select max ( T2.饱和脂肪含量 ) , min ( T1.消费次数 ) from 坚果中国人均消费 as T1 join 坚果 as T2 on T1.坚果id = T2.词条id where T1.占比 <= 0.02 and T2.不饱和脂肪含量 > 33
+
+index: 180
+db_id: 坚果
+hard pred: select T2.名称 , min ( T1.饱和脂肪含量 ) , avg ( T2.消费次数 ) from 坚果中国人均消费 as T1 join 坚果 as T2 on T1.坚果id == T2.词条id where T1.占比 <= 0.02 and T2.不饱和脂肪含量 >= 33 group by T1.坚果id
+hard gold: select min ( T2.饱和脂肪含量 ) , avg ( T1.消费次数 ) from 坚果中国人均消费 as T1 join 坚果 as T2 on T1.坚果id = T2.词条id where T1.占比 <= 0.02 and T2.不饱和脂肪含量 >= 33
+
+index: 181
+db_id: 坚果
+hard pred: select T2.名称 , min ( T1.含量 ) , sum ( T2.消费次数 ) from 坚果中国人均消费 as T1 join 坚果 as T2 on T1.坚果id == T2.词条id where T2.不饱和脂肪含量 > 33 and T1.占比 >= 0.02 group by T1.坚果id
+hard gold: select min ( T2.饱和脂肪含量 ) , sum ( T1.消费次数 ) from 坚果中国人均消费 as T1 join 坚果 as T2 on T1.坚果id = T2.词条id where T1.占比 >= 0.02 and T2.不饱和脂肪含量 > 33
+
+index: 182
+db_id: 坚果
+hard pred: select T2.名称 , max ( T1.占比 ) , max ( T2.饱和脂肪含量 ) from 坚果中国人均消费 as T1 join 坚果 as T2 on T1.坚果id == T2.词条id where T1.占比 < 0.02 and T2.不饱和脂肪含量 > 33 group by T1.坚果id
+hard gold: select max ( T2.饱和脂肪含量 ) , max ( T1.消费次数 ) from 坚果中国人均消费 as T1 join 坚果 as T2 on T1.坚果id = T2.词条id where T1.占比 < 0.02 and T2.不饱和脂肪含量 > 33
+
+index: 184
+db_id: 打车软件
+hard pred: select T2.名称 , T1.app名称 , T2.车数量 from 各打车APP支持的方式 as T1 join 打车方式 as T2 on T1.方式id == T2.词条id where T1.每日打车单数 <= 100000
+hard gold: select T3.名称 , T2.app名称 , T1.车数量 from 各打车APP支持的方式 as T1 join 打车APP as T2 join 打车方式 as T3 on T1.appid = T2.词条id and T1.方式id = T3.词条id where T1.每日打车单数 <= 100000
+
+index: 185
+db_id: 打车软件
+hard pred: select T2.名称 , T1.app名称 from 各打车APP支持的方式 as T1 join 打车APP as T2 on T1.appid == T2.词条id where T1.车数量 >= 100000
+hard gold: select T3.名称 , T2.app名称 from 各打车APP支持的方式 as T1 join 打车APP as T2 join 打车方式 as T3 on T1.appid = T2.词条id and T1.方式id = T3.词条id where T1.车数量 >= 100000
+
+index: 186
+db_id: 打车软件
+hard pred: select T3.名称 , T2.app名称 from 各打车APP支持的方式 as T1 join 打车方式 as T2 join 打车APP as T3 on T1.方式id == T2.词条id where T1.车数量 >= 100000
+hard gold: select T3.名称 , T2.app名称 from 各打车APP支持的方式 as T1 join 打车APP as T2 join 打车方式 as T3 on T1.appid = T2.词条id and T1.方式id = T3.词条id where T1.车数量 >= 100000
+
+index: 187
+db_id: 打车软件
+hard pred: select T2.名称 , T1.车数量 , T2.理念 from 各打车APP支持的方式 as T1 join 打车方式 as T2 on T1.方式id == T2.词条id where T1.市场份额 >= 0.1
+hard gold: select T3.名称 , T2.app名称 , T1.车数量 from 各打车APP支持的方式 as T1 join 打车APP as T2 join 打车方式 as T3 on T1.appid = T2.词条id and T1.方式id = T3.词条id where T1.市场份额 >= 0.1
+
+index: 188
+db_id: 打车软件
+hard pred: select T2.名称 , T1.app名称 from 各打车APP支持的方式 as T1 join 打车APP as T2 on T1.appid == T2.词条id where T1.车数量 <= 100000
+hard gold: select T3.名称 , T2.app名称 from 各打车APP支持的方式 as T1 join 打车APP as T2 join 打车方式 as T3 on T1.appid = T2.词条id and T1.方式id = T3.词条id where T1.车数量 <= 100000
+
+index: 190
+db_id: 打车软件
+hard pred: select T2.名称 , T1.app名称 , T2.车数量 from 各打车APP支持的方式 as T1 join 打车方式 as T2 on T1.方式id == T2.词条id where T1.每日打车单数 < 100000
+hard gold: select T3.名称 , T2.app名称 , T1.车数量 from 各打车APP支持的方式 as T1 join 打车APP as T2 join 打车方式 as T3 on T1.appid = T2.词条id and T1.方式id = T3.词条id where T1.每日打车单数 < 100000
+
+index: 195
+db_id: 购书平台
+hard pred: select T3.名称 , T2.书名 , T1.电子书售价 from 电子书 as T1 join 图书 as T2 join 平台 as T3 on T1.书名id == T2.词条id and T1.书名id == T3.词条id where T1.会员价格 > 5.99
+hard gold: select T3.名称 , T2.书名 , T1.电子书售价 from 电子书 as T1 join 图书 as T2 join 平台 as T3 on T1.书名id = T2.词条id and T1.平台id = T3.词条id where T1.会员价格 > 5.99
+
+index: 196
+db_id: 购书平台
+hard pred: select T3.名称 , T2.书名 , T1.电子书售价 from 电子书 as T1 join 图书 as T2 join 平台 as T3 on T1.书名id == T2.词条id and T1.书名id == T3.词条id where T1.购买人数 >= 100
+hard gold: select T3.名称 , T2.书名 , T1.电子书售价 from 电子书 as T1 join 图书 as T2 join 平台 as T3 on T1.书名id = T2.词条id and T1.平台id = T3.词条id where T1.购买人数 >= 100
+
+index: 197
+db_id: 奥运会参赛队伍
+hard pred: select T1.名称 , T1.举办城市 , T2.名称 , T2.所属洲 from 夏季奥运会 as T1 join 国家 as T2 on T1.举办国家id == T2.词条id where T1.参赛国家数量 < 205 order by T1.小项项目数 asc
+hard gold: select T1.名称 , T2.名称 , T2.所属洲 from 夏季奥运会 as T1 join 国家 as T2 on T1.举办国家id = T2.词条id where T1.参赛国家数量 < 205 order by T1.小项项目数 asc
+
+index: 198
+db_id: 奥运会参赛队伍
+hard pred: select T1.名称 , T1.举办城市 , T2.名称 , T2.所属洲 from 夏季奥运会 as T1 join 国家 as T2 on T1.举办国家id == T2.词条id where T1.参赛国家数量 <= 205 order by T1.参赛运动员数量 desc
+hard gold: select T1.名称 , T2.名称 , T2.所属洲 from 夏季奥运会 as T1 join 国家 as T2 on T1.举办国家id = T2.词条id where T1.参赛国家数量 <= 205 order by T1.参赛运动员数量 desc
+
+index: 201
+db_id: 奥运会参赛队伍
+hard pred: select T1.名称 , T1.举办城市 , T2.名称 , T2.所属洲 from 夏季奥运会 as T1 join 国家 as T2 on T1.举办国家id == T2.词条id where T1.参赛国家数量 >= 205 order by T1.参赛运动员数量 desc
+hard gold: select T1.名称 , T2.名称 , T2.所属洲 from 夏季奥运会 as T1 join 国家 as T2 on T1.举办国家id = T2.词条id where T1.参赛国家数量 >= 205 order by T1.参赛运动员数量 desc
+
+index: 202
+db_id: 奥运会参赛队伍
+hard pred: select T1.名称 , T1.举办城市 , T2.名称 , T2.所属洲 from 夏季奥运会 as T1 join 国家 as T2 on T1.举办国家id == T2.词条id where T1.参赛国家数量 < 205 order by T1.小项项目数 desc
+hard gold: select T1.名称 , T2.名称 , T2.所属洲 from 夏季奥运会 as T1 join 国家 as T2 on T1.举办国家id = T2.词条id where T1.参赛国家数量 < 205 order by T1.小项项目数 desc
+
+index: 203
+db_id: 奥运会参赛队伍
+extra pred: select T2.名称 , T1.大项项目数 , T2.所属洲 from 奥运会赞助商 as T1 join 夏季奥运会 as T2 on T1.奥运会id == T2.词条id where T2.参赛国家数量 < 205
+extra gold: select T1.名称 , T2.名称 , T2.所属洲 from 夏季奥运会 as T1 join 国家 as T2 on T1.举办国家id = T2.词条id where T1.参赛国家数量 < 205 order by T1.大项项目数 desc limit 3
+
+index: 206
+db_id: 奥运会参赛队伍
+extra pred: select T2.名称 , T1.举办城市 , T2.所属洲 from 夏季奥运会 as T1 join 国家 as T2 on T1.举办国家id == T2.词条id where T1.参赛国家数量 <= 205 order by T1.小项项目数 asc limit 3
+extra gold: select T1.名称 , T2.名称 , T2.所属洲 from 夏季奥运会 as T1 join 国家 as T2 on T1.举办国家id = T2.词条id where T1.参赛国家数量 <= 205 order by T1.小项项目数 asc limit 3
+
+index: 209
+db_id: 奥运会参赛队伍
+extra pred: select T2.名称 , T1.参赛国家数量 , T2.吉祥物 from 夏季奥运会 as T1 join 国家 as T2 on T1.举办国家id == T2.词条id where T1.参赛运动员数量 >= 311 order by T1.参赛国家数量 asc limit 3
+extra gold: select T1.名称 , T1.参赛国家数量 , T2.名称 from 夏季奥运会 as T1 join 国家 as T2 on T1.举办国家id = T2.词条id where T1.参赛运动员数量 >= 311 order by T1.参赛国家数量 asc limit 3
+
+index: 217
+db_id: 洗衣机
+extra pred: select T2.名称 , T2.所属公司 from 洗衣机品牌门店 as T1 join 洗衣机品牌 as T2 on T1.品牌id == T2.词条id where T1.市场份额 >= 0.102 group by T1.品牌id order by sum ( T1.售卖量 ) asc limit 1
+extra gold: select T2.名称 , T2.所属公司 from 洗衣机型号 as T1 join 洗衣机品牌 as T2 on T1.品牌id = T2.词条id where T2.市场份额 >= 0.102 group by T1.品牌id order by sum ( T1.售价 ) asc limit 1
+
+index: 218
+db_id: 洗衣机
+extra pred: select T2.名称 , T2.所属公司 from 洗衣机品牌门店 as T1 join 洗衣机品牌 as T2 on T1.品牌id == T2.词条id where T1.市场份额 > 0.1 group by T1.品牌id order by avg ( 平均售价 ) desc limit 1
+extra gold: select T2.名称 , T2.所属公司 from 洗衣机型号 as T1 join 洗衣机品牌 as T2 on T1.品牌id = T2.词条id where T2.市场份额 > 0.102 group by T1.品牌id order by avg ( 售价 ) desc limit 1
+
+index: 219
+db_id: 洗衣机
+extra pred: select T2.名称 , T2.所属公司 from 洗衣机品牌门店 as T1 join 洗衣机品牌 as T2 on T1.品牌id == T2.词条id where T1.市场份额 <= 0.102 group by T1.品牌id order by count ( * ) desc limit 5
+extra gold: select T2.名称 , T2.所属公司 from 洗衣机品牌门店 as T1 join 洗衣机品牌 as T2 on T1.品牌id = T2.词条id where T2.市场份额 <= 0.102 group by T1.品牌id order by count ( * ) desc limit 5
+
+index: 220
+db_id: 洗衣机
+extra pred: select T2.名称 , T2.所属公司 from 洗衣机品牌门店 as T1 join 洗衣机品牌 as T2 on T1.品牌id == T2.词条id where T1.市场份额 <= 0.102 group by T1.品牌id order by count ( * ) desc limit 1
+extra gold: select T2.名称 , T2.所属公司 from 洗衣机品牌门店 as T1 join 洗衣机品牌 as T2 on T1.品牌id = T2.词条id where T2.市场份额 <= 0.102 group by T1.品牌id order by count ( * ) desc limit 1
+
+index: 227
+db_id: 教材辅助参考书
+extra pred: select T2.名称 , T2.类型 from 适用城市 as T1 join 参考书 as T2 on T1.参考试卷id == T2.词条 and T1.适用年级 <= 3
+extra gold: select T2.名称 , T2.类型 from 参考试卷 as T1 join 参考书 as T2 on T1.试卷id = T2.词条id where T2.适用年级 <= 3 group by T1.试卷id order by count ( * ) desc limit 1
+
+index: 228
+db_id: 教材辅助参考书
+extra pred: select T2.名称 , T2.类型 from 适用城市 as T1 join 参考书 as T2 on T1.参考试卷id == T2.词条 where T2.适用年级 > 3 group by T1.参考试卷id order by count ( * ) desc limit 5
+extra gold: select T2.名称 , T2.类型 from 参考试卷 as T1 join 参考书 as T2 on T1.试卷id = T2.词条id where T2.适用年级 > 3 group by T1.试卷id order by count ( * ) desc limit 5
+
+index: 235
+db_id: 企业融资
+hard pred: select T2.法定代表人 , min ( T1.融资额 ) from 投资公司 as T1 join 企业 as T2 on T1.企业id == T2.词条id where T2.注册资本 >= 1000000
+hard gold: select T2.中文名 , min ( T1.融资额 ) , T2.法定代表人 from 投资公司 as T1 join 企业 as T2 on T1.企业id = T2.词条id where T2.注册资本 >= 1000000 group by T1.企业id
+
+index: 236
+db_id: 企业融资
+hard pred: select T2.法定代表人 , sum ( T1.融资额 ) from 投资公司 as T1 join 企业 as T2 on T1.企业id == T2.词条id where T2.注册资本 <= 1000000
+hard gold: select T2.中文名 , sum ( T1.融资额 ) , T2.法定代表人 from 投资公司 as T1 join 企业 as T2 on T1.企业id = T2.词条id where T2.注册资本 <= 1000000 group by T1.企业id
+
+index: 237
+db_id: 企业融资
+hard pred: select T2.法定代表人 , max ( T1.融资额 ) from 投资公司 as T1 join 企业 as T2 on T1.企业id == T2.词条id where T2.注册资本 > 1000000
+hard gold: select T2.中文名 , max ( T1.融资额 ) , T2.法定代表人 from 投资公司 as T1 join 企业 as T2 on T1.企业id = T2.词条id where T2.注册资本 > 1000000 group by T1.企业id
+
+index: 239
+db_id: 企业融资
+hard pred: select T2.法定代表人 , sum ( T1.融资额 ) from 投资公司 as T1 join 企业 as T2 on T1.企业id == T2.词条id where T2.注册资本 >= 1000000
+hard gold: select T2.中文名 , sum ( T1.融资额 ) , T2.法定代表人 from 投资公司 as T1 join 企业 as T2 on T1.企业id = T2.词条id where T2.注册资本 >= 1000000 group by T1.企业id
+
+index: 261
+db_id: 运动员比赛记录
+hard pred: select T2.中文名 , sum ( T1.出场次数 ) , T2.场上位置 from 比赛记录 as T1 join 篮球运动员 as T2 on T1.球员id == T2.词条id where T2.年龄 != 25 group by T1.球员id
+hard gold: select T2.中文名 , sum ( T1.出场次数 ) , T2.场上位置 from 比赛记录 as T1 join 篮球运动员 as T2 on T1.球员id = T2.词条id where T2.年龄 < 25 group by T1.球员id
+
+index: 278
+db_id: 洗衣机
+hard pred: select T2.名称 , T2.所属公司 from 洗衣机品牌门店 as T1 join 洗衣机品牌 as T2 on T1.品牌id == T2.词条id where T1.市场份额 >= 0.102 group by T1.品牌id having count ( * ) <= 500
+hard gold: select T2.名称 , T2.所属公司 from 洗衣机品牌门店 as T1 join 洗衣机品牌 as T2 on T1.品牌id = T2.词条id where T2.市场份额 >= 0.102 group by T1.品牌id having sum ( T1.门店数量 ) <= 500
+
+index: 279
+db_id: 洗衣机
+hard pred: select T2.名称 , T2.所属公司 from 洗衣机品牌门店 as T1 join 洗衣机品牌 as T2 on T1.品牌id == T2.词条id where T1.市场份额 < 0.102 group by T1.品牌id having avg ( 门店数量 ) < 500
+hard gold: select T2.名称 , T2.所属公司 from 洗衣机品牌门店 as T1 join 洗衣机品牌 as T2 on T1.品牌id = T2.词条id where T2.市场份额 < 0.102 group by T1.品牌id having avg ( 门店数量 ) < 500
+
+index: 286
+db_id: 教材辅助参考书
+hard pred: select T2.名称 , T2.类型 from 适用城市 as T1 join 参考书 as T2 on T1.参考试卷id == T2.词条 and T2.适用年级 < 3 group by T1.参考试卷id having count ( * ) > 5
+hard gold: select T2.名称 , T2.类型 from 参考试卷 as T1 join 参考书 as T2 on T1.试卷id = T2.词条id where T2.适用年级 < 3 group by T1.试卷id having count ( * ) > 5
+
+index: 308
+db_id: 购书平台
+hard pred: select T2.名称 , avg ( T1.售价 ) from 电子书 as T1 join 平台 as T2 on T1.平台id == T2.词条id where T2.年营业额 >= 717780000000 and T2.会员费 >= 150 group by T1.平台id having count ( * ) == 5
+hard gold: select T2.名称 , avg ( T1.电子书售价 ) from 电子书 as T1 join 平台 as T2 on T1.平台id = T2.词条id where T2.年营业额 >= 7177800000000 and T2.会员费 >= 150 group by T1.平台id having count ( * ) = 5
+
+index: 312
+db_id: 洗衣机
+hard pred: select T2.名称 , avg ( T1.售价 ) from 洗衣机品牌门店 as T1 join 洗衣机品牌 as T2 on T1.品牌id == T2.词条id where T2.市场份额 >= 0.1 and T2.`2018年营业额` >= 200700000000 group by T1.品牌id having count ( * ) <= 5
+hard gold: select T2.名称 , avg ( T1.售价 ) from 洗衣机型号 as T1 join 洗衣机品牌 as T2 on T1.品牌id = T2.词条id where T2.市场份额 >= 0.102 and T2.`2018年营业额` >= 200700000000 group by T1.品牌id having count ( * ) <= 5
+
+index: 317
+db_id: 购书平台
+extra pred: select T2.名称 , min ( T1.电子书售价 ) , T2.类型 from 电子书 as T1 join 平台 as T2 on T1.平台id == T2.词条id where T2.年营业额 > 717780000000 or T2.会员费 >= 150 group by T1.平台id having count ( * ) >= 5
+extra gold: select T2.名称 , min ( T1.电子书售价 ) from 电子书 as T1 join 平台 as T2 on T1.平台id = T2.词条id where T2.年营业额 > 7177800000000 or T2.会员费 >= 150 group by T1.平台id having count ( * ) >= 5
+
+index: 368
+db_id: 教材辅助参考书
+medium pred: select T2.类型 , T2.名称 from 适用城市 as T1 join 参考书 as T2 on T1.参考试卷id == T2.词条 and T1.版本 == '大二' group by T1.参考试卷id having count ( * ) <= 5
+medium gold: select T2.类型 , T2.名称 from 参考试卷 as T1 join 参考书 as T2 on T1.试卷id = T2.词条id group by T1.试卷id having count ( * ) <= 5
+
+index: 369
+db_id: 教材辅助参考书
+medium pred: select T2.类型 , T2.名称 from 适用城市 as T1 join 参考书 as T2 on T1.参考试卷id == T2.词条 and T1.版本 == '正常' group by T1.参考试卷id having count ( * ) == 5
+medium gold: select T2.类型 , T2.名称 from 参考试卷 as T1 join 参考书 as T2 on T1.试卷id = T2.词条id group by T1.试卷id having count ( * ) = 5
+
+index: 371
+db_id: 洗衣机
+medium pred: select T2.名称 , T2.所属公司 from 洗衣机品牌门店 as T1 join 洗衣机品牌 as T2 on T1.品牌id == T2.词条id group by T1.品牌id having avg ( T1.售卖量 ) >= 1500
+medium gold: select T2.所属公司 , T2.名称 from 洗衣机型号 as T1 join 洗衣机品牌 as T2 on T1.品牌id = T2.词条id group by T1.品牌id having avg ( T1.售价 ) >= 1500
+
+index: 380
+db_id: 欧洲杯球队
+medium pred: select T2.中文队名 , T2.所属地区 from 欧冠冠亚军 as T1 join 球队 as T2 on T1.冠军球队id == T2.词条id group by T1.冠军球队id having count ( * ) <= 5
+medium gold: select T2.所属地区 , T2.中文队名 from 欧冠冠亚军 as T1 join 球队 as T2 on T1.亚军球队id = T2.词条id group by T1.亚军球队id having count ( * ) <= 5
+
+index: 390
+db_id: 运动员比赛记录
+medium pred: select T2.场上位置 , T1.中文名 from 生涯之最 as T1 join 篮球运动员 as T2 on T1.球员id == T2.词条id group by T1.中文名 having count ( * ) <= 5
+medium gold: select T2.场上位置 , T2.中文名 from 生涯之最 as T1 join 篮球运动员 as T2 on T1.球员id = T2.词条id group by T1.球员id having count ( * ) <= 5
+
+index: 398
+db_id: 友好城市
+medium pred: select T2.城市 , T2.所属省 from 对口帮扶城市 as T1 join 城市 as T2 on T1.贫困城市id == T2.词条id group by T1.贫困城市id having count ( * ) <= 5
+medium gold: select T2.所属省份 , T2.城市 from 对口帮扶城市 as T1 join 城市 as T2 on T1.帮助城市id = T2.词条id group by T1.帮助城市id having count ( * ) <= 5
+
+index: 399
+db_id: 友好城市
+medium pred: select T2.所属省 , T2.城市 from 对口帮扶城市 as T1 join 城市 as T2 on T1.贫困城市id == T2.词条id group by T1.贫困城市id having count ( * ) >= 5
+medium gold: select T2.所属省份 , T2.城市 from 对口帮扶城市 as T1 join 城市 as T2 on T1.帮助城市id = T2.词条id group by T1.帮助城市id having count ( * ) >= 5
+
+index: 400
+db_id: 购书平台
+medium pred: select T2.书名 , T2.作者 from 电子书 as T1 join 图书 as T2 on T1.书名id == T2.词条id
+medium gold: select T2.作者 , T2.书名 from 电子书 as T1 join 图书 as T2 on T1.书名id = T2.词条id group by T1.书名id having sum ( T1.电子书售价 ) > 80
+
+index: 401
+db_id: 购书平台
+medium pred: select T2.书名 , T2.作者 from 电子书 as T1 join 图书 as T2 on T1.书名id == T2.词条id
+medium gold: select T2.作者 , T2.书名 from 电子书 as T1 join 图书 as T2 on T1.书名id = T2.词条id group by T1.书名id having sum ( T1.电子书售价 ) < 80
+
+index: 436
+db_id: 打车软件
+medium pred: select T2.app名称 , T2.所属公司 from 各打车APP支持的方式 as T1 join 打车APP as T2 on T1.appid == T2.词条id group by T1.appid having avg ( T1.车数量 ) <= ( select sum ( T2.每日营收 ) from 软件对租车的支持 as T1 join 打车APP as T2 on T1.appid == T2.词条id )
+medium gold: select T2.app名称 , avg ( T1.车数量 ) from 各打车APP支持的方式 as T1 join 打车APP as T2 on T1.appid = T2.词条id group by T1.appid having sum ( T1.每日营收 ) <= 100
+
+index: 442
+db_id: 企业融资
+extra pred: select T2.中文名 , T1.融资额 , T2.法定代表人 from 投资公司 as T1 join 企业 as T2 on T1.企业id == T2.词条id order by T1.融资轮次 asc limit 1
+extra gold: select T2.中文名 , T2.法定代表人 , sum ( T1.融资额 ) from 投资公司 as T1 join 企业 as T2 on T1.企业id = T2.词条id group by T1.企业id order by count ( * ) asc limit 1
+
+index: 447
+db_id: 企业融资
+extra pred: select T2.中文名 , T2.法定代表人 , max ( T1.融资总额 ) from 企业融资 as T1 join 企业 as T2 on T1.企业id == T2.词条id group by T1.企业id having count ( * ) <= 3
+extra gold: select T2.中文名 , T2.法定代表人 , max ( T1.融资总额 ) from 企业融资 as T1 join 企业 as T2 on T1.企业id = T2.词条id group by T1.企业id order by count ( * ) desc limit 3
+
+index: 457
+db_id: 洗衣机
+extra pred: select T2.名称 , T1.售价 , T2.所属公司 from 洗衣机型号 as T1 join 洗衣机品牌 as T2 on T1.品牌id == T2.词条id order by T1.售价 desc limit 3
+extra gold: select T2.名称 , T2.所属公司 , sum ( T1.售价 ) from 洗衣机型号 as T1 join 洗衣机品牌 as T2 on T1.品牌id = T2.词条id group by T1.品牌id order by count ( * ) desc limit 3
+
+index: 460
+db_id: 教材辅助参考书
+extra pred: select T2.名称 , T2.类型 from 适用城市 as T1 join 参考书 as T2 on T1.参考试卷id == T2.词条 order by count ( * ) asc limit 1
+extra gold: select T2.名称 , T2.类型 from 参考试卷 as T1 join 参考书 as T2 on T1.试卷id = T2.词条id group by T1.试卷id order by count ( * ) asc limit 1
+
+index: 461
+db_id: 教材辅助参考书
+extra pred: select T2.名称 , T2.类型 from 适用城市 as T1 join 参考书 as T2 on T1.参考试卷id == T2.词条 and T1.版本 == '小学' group by T1.参考试卷id order by count ( * ) desc limit 1
+extra gold: select T2.名称 , T2.类型 from 参考试卷 as T1 join 参考书 as T2 on T1.试卷id = T2.词条id group by T1.试卷id order by count ( * ) desc limit 1
+
+index: 470
+db_id: 友好城市
+extra pred: select T2.城市 , T2.所属省 from 一带一路线路上的国家 as T1 join 一带一路的中国城市 as T2 on T1.国家 == T2.国家 group by T1.国家 order by count ( * ) desc limit 1
+extra gold: select T2.城市 , T2.所属省份 from 一带一路的中国城市 as T1 join 城市 as T2 on T1.城市id = T2.词条id group by T1.城市id order by count ( * ) desc limit 1
+
+index: 471
+db_id: 友好城市
+extra pred: select T2.城市 , T2.所属省 from 一带一路线路上的国家 as T1 join 一带一路的中国城市 as T2 on T1.国家 == T2.国家 group by T1.国家 order by count ( * ) desc limit 3
+extra gold: select T2.城市 , T2.所属省份 from 一带一路的中国城市 as T1 join 城市 as T2 on T1.城市id = T2.词条id group by T1.城市id order by count ( * ) desc limit 3
+
+index: 475
+db_id: 欧洲杯球队
+extra pred: select T2.中文队名 , T2.所属地区 from 欧冠冠亚军 as T1 join 球队 as T2 on T1.冠军球队id == T2.词条id group by T1.冠军球队id order by count ( * ) asc limit 3
+extra gold: select T2.中文队名 , T2.所属地区 from 欧冠冠亚军 as T1 join 球队 as T2 on T1.亚军球队id = T2.词条id group by T1.亚军球队id order by count ( * ) asc limit 3
+
+index: 476
+db_id: 中国卫视频道
+extra pred: select T2.名称 , T2.隶属机构 from 电视剧收视 as T1 join 电视台 as T2 on T1.首播平台id == T2.词条id group by T1.首播平台id order by count ( * ) desc limit 3
+extra gold: select T2.名称 , T2.隶属机构 from 电视剧 as T1 join 电视台 as T2 on T1.首播平台id = T2.词条id group by T1.首播平台id order by count ( * ) desc limit 3
+
+index: 477
+db_id: 中国卫视频道
+extra pred: select T2.名称 , T2.隶属机构 from 电视剧收视 as T1 join 电视台 as T2 on T1.首播平台id == T2.词条id group by T1.首播平台id order by count ( * ) asc limit 1
+extra gold: select T2.名称 , T2.隶属机构 from 电视剧 as T1 join 电视台 as T2 on T1.首播平台id = T2.词条id group by T1.首播平台id order by count ( * ) asc limit 1
+
+index: 479
+db_id: 中国高校
+extra pred: select T2.名称 , T2.语言 from 奖项 as T1 join 高校 as T2 on T1.高校id == T2.词条id group by T1.高校id order by sum ( T1.奖项数量 ) desc limit 3
+extra gold: select T2.名称 , T2.类别 from 高校属性 as T1 join 高校 as T2 on T1.高校id = T2.词条id group by T1.高校id order by count ( * ) desc limit 1
+
+index: 482
+db_id: 奥运会参赛队伍
+extra pred: select T2.名称 , T2.所属洲 from 奥运会赞助商 as T1 join 夏季奥运会 as T2 on T1.奥运会id == T2.词条id group by T1.奥运会id order by count ( * ) asc limit 3
+extra gold: select T2.名称 , T2.所属洲 from 夏季奥运会 as T1 join 国家 as T2 on T1.举办国家id = T2.词条id group by T1.举办国家id order by count ( * ) asc limit 3
+
+index: 483
+db_id: 奥运会参赛队伍
+extra pred: select T2.名称 , T2.所属洲 from 奥运会赞助商 as T1 join 夏季奥运会 as T2 on T1.奥运会id == T2.词条id group by T1.奥运会id having sum ( T1.份额 ) == min ( T2.参赛国家数量 )
+extra gold: select T2.名称 , T2.所属洲 from 夏季奥运会 as T1 join 国家 as T2 on T1.举办国家id = T2.词条id group by T1.举办国家id order by sum ( T1.参赛国家数量 ) asc limit 1
+
+index: 488
+db_id: 奥运会参赛队伍
+extra pred: select T1.名称 , T1.举办城市 , T2.名称 , T2.所属洲 from 夏季奥运会 as T1 join 国家 as T2 on T1.举办国家id == T2.词条id where T1.参赛国家数量 <= ( select avg ( 参赛国家数量 ) from T1 )
+extra gold: select T1.名称 , T1.举办城市 , T2.名称 , T2.所属洲 from 夏季奥运会 as T1 join 国家 as T2 on T1.举办国家id = T2.词条id where T1.参赛国家数量 <= ( select avg ( 参赛国家数量 ) from 夏季奥运会 )
+
+index: 489
+db_id: 奥运会参赛队伍
+extra pred: select T1.名称 , T1.举办城市 , T2.名称 , T2.所属洲 from 夏季奥运会 as T1 join 国家 as T2 on T1.举办国家id == T2.词条id where T1.参赛国家数量 > ( select avg ( 参赛国家数量 ) from T1 )
+extra gold: select T1.名称 , T1.举办城市 , T2.名称 , T2.所属洲 from 夏季奥运会 as T1 join 国家 as T2 on T1.举办国家id = T2.词条id where T1.参赛国家数量 > ( select avg ( 参赛国家数量 ) from 夏季奥运会 )
+
+index: 492
+db_id: 奥运会参赛队伍
+extra pred: select T1.名称 , T1.举办城市 , T2.名称 , T2.所属洲 from 夏季奥运会 as T1 join 国家 as T2 on T1.举办国家id == T2.词条id where T1.参赛国家数量 == ( select avg ( 参赛国家数量 ) from T1 )
+extra gold: select T1.名称 , T1.举办城市 , T2.名称 , T2.所属洲 from 夏季奥运会 as T1 join 国家 as T2 on T1.举办国家id = T2.词条id where T1.参赛国家数量 = ( select avg ( 参赛国家数量 ) from 夏季奥运会 )
+
+index: 496
+db_id: 奥运会参赛队伍
+extra pred: select T1.名称 , T1.举办城市 , T2.名称 , T2.所属洲 from 夏季奥运会 as T1 join 国家 as T2 on T1.举办国家id == T2.词条id where T1.参赛国家数量 == ( select avg ( 参赛国家数量 ) from T1 )
+extra gold: select T1.名称 , T1.举办城市 , T2.名称 , T2.所属洲 from 夏季奥运会 as T1 join 国家 as T2 on T1.举办国家id = T2.词条id where T1.参赛国家数量 = ( select avg ( 参赛国家数量 ) from 夏季奥运会 )
+
+index: 497
+db_id: 奥运会参赛队伍
+extra pred: select T1.名称 , T1.举办城市 , T2.名称 , T2.所属洲 from 夏季奥运会 as T1 join 国家 as T2 on T1.举办国家id == T2.词条id where T1.参赛国家数量 >= ( select avg ( 参赛国家数量 ) from T1 )
+extra gold: select T1.名称 , T1.举办城市 , T2.名称 , T2.所属洲 from 夏季奥运会 as T1 join 国家 as T2 on T1.举办国家id = T2.词条id where T1.参赛国家数量 >= ( select avg ( 参赛国家数量 ) from 夏季奥运会 )
+
+index: 499
+db_id: 奥运会参赛队伍
+extra pred: select T1.名称 , T1.举办城市 , T2.名称 , T2.所属洲 from 夏季奥运会 as T1 join 国家 as T2 on T1.举办国家id == T2.词条id where T1.参赛国家数量 < ( select avg ( 参赛国家数量 ) from T1 )
+extra gold: select T1.名称 , T1.举办城市 , T2.名称 , T2.所属洲 from 夏季奥运会 as T1 join 国家 as T2 on T1.举办国家id = T2.词条id where T1.参赛国家数量 < ( select avg ( 参赛国家数量 ) from 夏季奥运会 )
+
+index: 500
+db_id: 奥运会参赛队伍
+extra pred: select T1.名称 , T1.举办城市 , T2.名称 , T2.所属洲 from 夏季奥运会 as T1 join 国家 as T2 on T1.举办国家id == T2.词条id where T1.参赛国家数量 <= ( select avg ( 参赛国家数量 ) from T1 )
+extra gold: select T1.名称 , T1.举办城市 , T2.名称 , T2.所属洲 from 夏季奥运会 as T1 join 国家 as T2 on T1.举办国家id = T2.词条id where T1.参赛国家数量 <= ( select avg ( 参赛国家数量 ) from 夏季奥运会 )
+
+index: 501
+db_id: 奥运会参赛队伍
+extra pred: select T1.名称 , T1.举办城市 , T2.名称 , T2.所属洲 from 夏季奥运会 as T1 join 国家 as T2 on T1.举办国家id == T2.词条id where T1.参赛国家数量 > ( select avg ( 参赛国家数量 ) from T1 )
+extra gold: select T1.名称 , T1.举办城市 , T2.名称 , T2.所属洲 from 夏季奥运会 as T1 join 国家 as T2 on T1.举办国家id = T2.词条id where T1.参赛国家数量 > ( select avg ( 参赛国家数量 ) from 夏季奥运会 )
+
+index: 502
+db_id: 洗衣机
+extra pred: select T1.名称 , T1.产品类别 , T2.名称 , T2.所属公司 from 洗衣机型号 as T1 join 洗衣机品牌 as T2 on T1.品牌id == T2.词条id where T1.售价 < ( select avg ( 售价 ) from T1 )
+extra gold: select T1.名称 , T1.产品类别 , T2.名称 , T2.所属公司 from 洗衣机型号 as T1 join 洗衣机品牌 as T2 on T1.品牌id = T2.词条id where T1.售价 < ( select avg ( 售价 ) from 洗衣机型号 )
+
+index: 503
+db_id: 洗衣机
+extra pred: select T1.名称 , T1.产品类别 , T2.名称 , T2.所属公司 from 洗衣机型号 as T1 join 洗衣机品牌 as T2 on T1.品牌id == T2.词条id where T1.售价 < ( select avg ( 售价 ) from T1 )
+extra gold: select T1.名称 , T1.产品类别 , T2.名称 , T2.所属公司 from 洗衣机型号 as T1 join 洗衣机品牌 as T2 on T1.品牌id = T2.词条id where T1.售价 < ( select avg ( 售价 ) from 洗衣机型号 )
+
+index: 504
+db_id: 洗衣机
+extra pred: select T1.名称 , T1.产品类别 , T2.名称 , T2.所属公司 from 洗衣机型号 as T1 join 洗衣机品牌 as T2 on T1.品牌id == T2.词条id where T1.售价 > ( select avg ( 售价 ) from T1 )
+extra gold: select T1.名称 , T1.产品类别 , T2.名称 , T2.所属公司 from 洗衣机型号 as T1 join 洗衣机品牌 as T2 on T1.品牌id = T2.词条id where T1.售价 > ( select avg ( 售价 ) from 洗衣机型号 )
+
+index: 505
+db_id: 洗衣机
+extra pred: select T1.名称 , T1.产品类别 , T2.名称 , T2.所属公司 from 洗衣机型号 as T1 join 洗衣机品牌 as T2 on T1.品牌id == T2.词条id where T1.售价 >= ( select avg ( 售价 ) from T1 )
+extra gold: select T1.名称 , T1.产品类别 , T2.名称 , T2.所属公司 from 洗衣机型号 as T1 join 洗衣机品牌 as T2 on T1.品牌id = T2.词条id where T1.售价 >= ( select avg ( 售价 ) from 洗衣机型号 )
+
+index: 506
+db_id: 洗衣机
+extra pred: select T1.名称 , T1.产品类别 , T2.名称 , T2.所属公司 from 洗衣机型号 as T1 join 洗衣机品牌 as T2 on T1.品牌id == T2.词条id where T1.售价 > ( select avg ( 售价 ) from T1 )
+extra gold: select T1.名称 , T1.产品类别 , T2.名称 , T2.所属公司 from 洗衣机型号 as T1 join 洗衣机品牌 as T2 on T1.品牌id = T2.词条id where T1.售价 > ( select avg ( 售价 ) from 洗衣机型号 )
+
+index: 507
+db_id: 洗衣机
+extra pred: select T1.名称 , T1.产品类别 , T2.名称 , T2.所属公司 from 洗衣机型号 as T1 join 洗衣机品牌 as T2 on T1.品牌id == T2.词条id where T1.售价 == ( select avg ( 售价 ) from T1 )
+extra gold: select T1.名称 , T1.产品类别 , T2.名称 , T2.所属公司 from 洗衣机型号 as T1 join 洗衣机品牌 as T2 on T1.品牌id = T2.词条id where T1.售价 = ( select avg ( 售价 ) from 洗衣机型号 )
+
+index: 508
+db_id: 洗衣机
+extra pred: select T1.名称 , T1.产品类别 , T2.名称 , T2.所属公司 from 洗衣机型号 as T1 join 洗衣机品牌 as T2 on T1.品牌id == T2.词条id where T1.售价 <= ( select avg ( 售价 ) from T1 )
+extra gold: select T1.名称 , T1.产品类别 , T2.名称 , T2.所属公司 from 洗衣机型号 as T1 join 洗衣机品牌 as T2 on T1.品牌id = T2.词条id where T1.售价 <= ( select avg ( 售价 ) from 洗衣机型号 )
+
+index: 509
+db_id: 洗衣机
+extra pred: select T1.名称 , T1.产品类别 , T2.名称 , T2.所属公司 from 洗衣机型号 as T1 join 洗衣机品牌 as T2 on T1.品牌id == T2.词条id where T1.售价 < ( select avg ( 售价 ) from T1 )
+extra gold: select T1.名称 , T1.产品类别 , T2.名称 , T2.所属公司 from 洗衣机型号 as T1 join 洗衣机品牌 as T2 on T1.品牌id = T2.词条id where T1.售价 < ( select avg ( 售价 ) from 洗衣机型号 )
+
+index: 510
+db_id: 洗衣机
+extra pred: select T1.名称 , T1.产品类别 , T2.名称 , T2.所属公司 from 洗衣机型号 as T1 join 洗衣机品牌 as T2 on T1.品牌id == T2.词条id where T1.售价 > ( select min ( 售价 ) from T1 )
+extra gold: select T1.名称 , T1.产品类别 , T2.名称 , T2.所属公司 from 洗衣机型号 as T1 join 洗衣机品牌 as T2 on T1.品牌id = T2.词条id where T1.售价 > ( select min ( 售价 ) from 洗衣机型号 )
+
+index: 511
+db_id: 洗衣机
+extra pred: select T1.名称 , T1.产品类别 , T2.名称 , T2.所属公司 from 洗衣机型号 as T1 join 洗衣机品牌 as T2 on T1.品牌id == T2.词条id where T1.售价 <= ( select avg ( 售价 ) from T1 )
+extra gold: select T1.名称 , T1.产品类别 , T2.名称 , T2.所属公司 from 洗衣机型号 as T1 join 洗衣机品牌 as T2 on T1.品牌id = T2.词条id where T1.售价 <= ( select avg ( 售价 ) from 洗衣机型号 )
+
+index: 512
+db_id: 洗衣机
+extra pred: select T1.名称 , T1.产品类别 , T2.名称 , T2.所属公司 from 洗衣机型号 as T1 join 洗衣机品牌 as T2 on T1.品牌id == T2.词条id where T1.售价 >= ( select avg ( 售价 ) from T1 )
+extra gold: select T1.名称 , T1.产品类别 , T2.名称 , T2.所属公司 from 洗衣机型号 as T1 join 洗衣机品牌 as T2 on T1.品牌id = T2.词条id where T1.售价 >= ( select avg ( 售价 ) from 洗衣机型号 )
+
+index: 513
+db_id: 洗衣机
+extra pred: select T1.名称 , T1.产品类别 , T2.名称 , T2.所属公司 from 洗衣机型号 as T1 join 洗衣机品牌 as T2 on T1.品牌id == T2.词条id where T1.售价 < ( select avg ( 售价 ) from T1 )
+extra gold: select T1.名称 , T1.产品类别 , T2.名称 , T2.所属公司 from 洗衣机型号 as T1 join 洗衣机品牌 as T2 on T1.品牌id = T2.词条id where T1.售价 < ( select avg ( 售价 ) from 洗衣机型号 )
+
+index: 514
+db_id: 洗衣机
+extra pred: select T1.名称 , T1.产品类别 , T2.名称 , T2.所属公司 from 洗衣机型号 as T1 join 洗衣机品牌 as T2 on T1.品牌id == T2.词条id where T1.售价 == ( select avg ( 售价 ) from T1 )
+extra gold: select T1.名称 , T1.产品类别 , T2.名称 , T2.所属公司 from 洗衣机型号 as T1 join 洗衣机品牌 as T2 on T1.品牌id = T2.词条id where T1.售价 = ( select avg ( 售价 ) from 洗衣机型号 )
+
+index: 515
+db_id: 洗衣机
+extra pred: select T1.名称 , T1.产品类别 , T2.名称 , T2.所属公司 from 洗衣机型号 as T1 join 洗衣机品牌 as T2 on T1.品牌id == T2.词条id where T1.售价 > ( select min ( 售价 ) from T1 )
+extra gold: select T1.名称 , T1.产品类别 , T2.名称 , T2.所属公司 from 洗衣机型号 as T1 join 洗衣机品牌 as T2 on T1.品牌id = T2.词条id where T1.售价 > ( select min ( 售价 ) from 洗衣机型号 )
+
+index: 538
+db_id: 打车软件
+hard pred: select T2.名称 , T3.名称 , T2.车数量 from 各打车APP支持的方式 as T1 join 打车方式 as T2 join 打车APP as T3 on T1.方式id == T2.词条id order by T1.市场份额 asc
+hard gold: select T3.名称 , T2.app名称 , T1.车数量 from 各打车APP支持的方式 as T1 join 打车APP as T2 join 打车方式 as T3 on T1.appid = T2.词条id and T1.方式id = T3.词条id order by T1.市场份额 asc
+
+index: 539
+db_id: 打车软件
+hard pred: select T2.名称 , T1.车数量 , T2.名称 from 各打车APP支持的方式 as T1 join 打车方式 as T2 on T1.方式id == T2.词条id order by T1.每日打车单数 desc
+hard gold: select T3.名称 , T2.app名称 , T1.车数量 from 各打车APP支持的方式 as T1 join 打车APP as T2 join 打车方式 as T3 on T1.appid = T2.词条id and T1.方式id = T3.词条id order by T1.每日打车单数 desc
+
+index: 540
+db_id: 企业融资
+hard pred: select T2.中文名 , T1.融资轮次 from 企业融资 as T1 join 企业 as T2 on T1.企业id == T2.词条id order by T1.融资总额 desc
+hard gold: select T3.投资公司 , T2.中文名 , T1.融资轮次 from 企业融资 as T1 join 企业 as T2 join 投资公司 as T3 on T1.企业id = T2.词条id and T3.企业id = T2.词条id order by T1.融资总额 desc
+
+index: 541
+db_id: 企业融资
+hard pred: select T2.中文名 , T1.融资轮次 from 企业融资 as T1 join 企业 as T2 on T1.企业id == T2.词条id order by T1.融资总额 asc
+hard gold: select T3.投资公司 , T2.中文名 , T1.融资轮次 from 企业融资 as T1 join 企业 as T2 join 投资公司 as T3 on T1.企业id = T2.词条id and T3.企业id = T2.词条id order by T1.融资总额 asc
+
+index: 542
+db_id: 购书平台
+hard pred: select T2.书名 , T2.作者 , T1.电子书售价 , T1.平台id from 电子书 as T1 join 图书 as T2 on T1.书名id == T2.词条id order by T1.会员价格 desc
+hard gold: select T3.名称 , T2.书名 , T1.电子书售价 from 电子书 as T1 join 图书 as T2 join 平台 as T3 on T1.书名id = T2.词条id and T1.平台id = T3.词条id order by T1.会员价格 desc
+
+index: 543
+db_id: 购书平台
+hard pred: select T3.书名 , T2.名称 , T1.电子书售价 from 电子书 as T1 join 图书 as T2 join 平台 as T3 on T1.书名id == T2.词条id and T1.平台id == T3.词条id order by T1.购买人数 asc
+hard gold: select T3.名称 , T2.书名 , T1.电子书售价 from 电子书 as T1 join 图书 as T2 join 平台 as T3 on T1.书名id = T2.词条id and T1.平台id = T3.词条id order by T1.购买人数 asc
+
+index: 544
+db_id: 打车软件
+extra pred: select T2.名称 , T1.名称 , T2.车数量 from 各打车APP支持的方式 as T1 join 打车方式 as T2 on T1.方式id == T2.词条id order by T1.每日营收 desc limit 3
+extra gold: select T2.app名称 , T3.名称 , T1.车数量 from 各打车APP支持的方式 as T1 join 打车APP as T2 join 打车方式 as T3 on T1.appid = T2.词条id and T1.方式id = T3.词条id order by T1.每日营收 desc limit 3
+
+index: 545
+db_id: 打车软件
+extra pred: select T2.app名称 , T3.名称 , T1.车数量 from 各打车APP支持的方式 as T1 join 打车方式 as T2 join 打车APP as T3 on T1.方式id == T2.词条id order by T1.每日营收 asc limit 3
+extra gold: select T2.app名称 , T3.名称 , T1.车数量 from 各打车APP支持的方式 as T1 join 打车APP as T2 join 打车方式 as T3 on T1.appid = T2.词条id and T1.方式id = T3.词条id order by T1.每日营收 asc limit 3
+
+index: 548
+db_id: 购书平台
+extra pred: select T2.书名 , T2.作者 , T1.售价 , T1.加入购物车人数 from 图书与平台 as T1 join 图书 as T2 on T1.书名id == T2.词条id order by T1.评分 desc limit 3
+extra gold: select T2.书名 , T3.名称 , T1.售价 , T1.加入购物车人数 from 图书与平台 as T1 join 图书 as T2 join 平台 as T3 on T1.书名id = T2.词条id and T1.平台id = T3.词条id order by T1.评分 desc limit 3
+
+index: 549
+db_id: 购书平台
+extra pred: select T2.书名 , T2.名称 , T1.售价 from 图书与平台 as T1 join 平台 as T2 on T1.平台id == T2.词条id order by T1.评分 desc limit 3
+extra gold: select T2.书名 , T3.名称 , T1.售价 from 图书与平台 as T1 join 图书 as T2 join 平台 as T3 on T1.书名id = T2.词条id and T1.平台id = T3.词条id order by T1.评分 desc limit 3
+
+index: 550
+db_id: 企业融资
+extra pred: select T2.中文名 , T1.融资轮次 , T2.中文名 from 企业融资 as T1 join 企业 as T2 on T1.企业id == T2.词条id order by T1.融资总额 asc limit 3
+extra gold: select T2.中文名 , T3.投资公司 , T1.融资轮次 from 企业融资 as T1 join 企业 as T2 join 投资公司 as T3 on T1.企业id = T2.词条id and T3.企业id = T2.词条id order by T1.融资总额 asc limit 3
+
+index: 551
+db_id: 企业融资
+extra pred: select T2.中文名 , T1.融资轮次 , T2.中文名 from 企业融资 as T1 join 企业 as T2 on T1.企业id == T2.词条id order by T1.融资总额 desc limit 3
+extra gold: select T2.中文名 , T3.投资公司 , T1.融资轮次 from 企业融资 as T1 join 企业 as T2 join 投资公司 as T3 on T1.企业id = T2.词条id and T3.企业id = T2.词条id order by T1.融资总额 desc limit 3
+
+index: 554
+db_id: 友好城市
+easy pred: select 城市id from 城市 where 词条id not in ( select 城市id from 一带一路的中国城市 )
+easy gold: SELECT * FROM (SELECT * FROM (  ( SELECT 词条id from 城市 ) ) EXCEPT SELECT * FROM ( ( SELECT 城市id from 一带一路的中国城市 ) ))
+
+index: 555
+db_id: 欧洲杯球队
+easy pred: select 冠军球队id from 欧冠冠亚军 where 冠军球队id not in ( select 冠军球队id from 欧冠冠亚军 )
+easy gold: SELECT * FROM (SELECT * FROM (  ( SELECT 词条id from 球队 ) ) EXCEPT SELECT * FROM ( ( SELECT 冠军球队id from 欧冠冠亚军 ) ))
+
+index: 556
+db_id: 欧洲杯球队
+easy pred: select 冠军球队id from 欧冠冠亚军 where 冠军主教练 != '冠军'
+easy gold: SELECT * FROM (SELECT * FROM (  ( SELECT 词条id from 球队 ) ) EXCEPT SELECT * FROM ( ( SELECT 亚军球队id from 欧冠冠亚军 ) ))
+
+index: 565
+db_id: 中国高校
+extra pred: select T2.名称 , T2.类别 from 奖项 as T1 join 高校 as T2 on T1.高校id == T2.词条id group by T1.高校id order by count ( * ) asc limit 1
+extra gold: select T2.名称 , T2.类别 from 奖项 as T1 join 高校 as T2 on T1.高校id = T2.词条id group by T1.高校id order by sum ( T1.奖项数量 ) asc limit 1
+
+index: 570
+db_id: 中国高校
+extra pred: select T2.名称 , T2.类别 from 奖项 as T1 join 高校 as T2 on T1.高校id == T2.词条id group by T1.高校id order by sum ( T1.奖项数量 ) desc limit 3
+extra gold: select T2.名称 , T2.类别 from 奖项 as T1 join 高校 as T2 on T1.高校id = T2.词条id group by T1.高校id order by sum ( T1.奖项数量 ) asc limit 3
+
+index: 590
+db_id: 综艺节目
+medium pred: select 播放数 from 接档节目
+medium gold: select T2.节目名称 , count ( * ) from 收视率 as T1 join 综艺节目 as T2 on T1.节目id = T2.词条id group by T1.节目id
+
+index: 594
+db_id: 综艺节目
+extra pred: select 冠名商 from 综艺节目 where 系列名 == '欢乐喜剧人' group by 冠名商 order by sum ( 收视份额 ) desc limit 1
+extra gold: select T2.节目名称 from 收视率 as T1 join 综艺节目 as T2 on T1.节目id = T2.词条id where T2.系列名 = '欢乐喜剧人' group by T1.节目id order by sum ( T1.收视份额 ) desc limit 1
+
+index: 596
+db_id: 综艺节目
+extra pred: select 节目id from 收视率 where 系列名 == '欢乐喜剧人' group by 节目id order by sum ( 收视份额 ) asc limit 2
+extra gold: select T2.节目名称 from 收视率 as T1 join 综艺节目 as T2 on T1.节目id = T2.词条id where T2.系列名 = '欢乐喜剧人' group by T1.节目id order by sum ( T1.收视份额 ) asc limit 2
+
+index: 605
+db_id: 综艺节目
+extra pred: select T2.节目名称 , T2.系列名 from 收视率 as T1 join 综艺节目 as T2 on T1.节目id == T2.词条id group by T1.节目id order by avg ( T1.播放数 / T1.收视份额 ) asc limit 5
+extra gold: select T2.节目名称 , T2.系列名 from 收视率 as T1 join 综艺节目 as T2 on T1.节目id = T2.词条id group by T1.节目id order by avg ( T1.收视率 ) asc limit 5
+
+index: 606
+db_id: 购书平台
+hard pred: select T2.名称 , avg ( T1.售价 ) from 电子书 as T1 join 平台 as T2 on T1.平台id == T2.词条id where T2.年营业额 >= 717780000000 and T2.会员费 >= 150 group by T1.平台id having count ( * ) == 5
+hard gold: select T2.名称 , avg ( T1.电子书售价 ) from 电子书 as T1 join 平台 as T2 on T1.平台id = T2.词条id where T2.年营业额 >= 7177800000000 and T2.会员费 >= 150 group by T1.平台id having count ( * ) = 5
+
+index: 610
+db_id: 洗衣机
+hard pred: select T2.名称 , avg ( T1.售价 ) from 洗衣机品牌门店 as T1 join 洗衣机品牌 as T2 on T1.品牌id == T2.词条id where T2.市场份额 >= 0.1 and T2.`2018年营业额` >= 200700000000 group by T1.品牌id having count ( * ) <= 5
+hard gold: select T2.名称 , avg ( T1.售价 ) from 洗衣机型号 as T1 join 洗衣机品牌 as T2 on T1.品牌id = T2.词条id where T2.市场份额 >= 0.102 and T2.`2018年营业额` >= 200700000000 group by T1.品牌id having count ( * ) <= 5
+
+index: 626
+db_id: 洗衣机
+medium pred: select 平台 , count ( * ) from 洗衣机品牌门店 group by 平台
+medium gold: select 平台 , count ( * ) from 洗衣机品牌平台评分 group by 平台
+
+index: 647
+db_id: 奥运会参赛队伍
+hard pred: select 举办城市 from 夏季奥运会 group by 举办城市 having avg ( 参赛国家数量 ) < ( select avg ( 参赛国家数量 ) from 夏季奥运会 where 大项项目数 < 16 )
+hard gold: select 举办城市 from 夏季奥运会 group by 举办城市 having avg ( 参赛国家数量 ) = ( select avg ( 参赛国家数量 ) from 夏季奥运会 where 大项项目数 < 16 )
+
+index: 650
+db_id: 企业融资
+hard pred: select 法定代表人 , 中文名 from 企业 order by 注册资本 desc limit 2
+hard gold: select 中文名 from 企业 where 法定代表人 in ( select 法定代表人 from 企业 group by 法定代表人 order by avg ( 注册资本 ) desc limit 2 )
+
+index: 662
+db_id: 城市财政收入
+hard pred: select 省份 from 各省财政收入 where GDP总计(亿) == ( select avg ( GDP总计(亿) ) from 各省财政收入 )
+hard gold: select 省份 from 各省财政收入 where `GDP总计(亿)` = ( select avg ( `GDP总计(亿)` ) from 各省财政收入 )
+
+index: 672
+db_id: CCTV中国经济年度人物
+extra pred: select 姓名 , 性别 from 企业人物 where 年龄 > ( select min ( 年龄 ) from 企业人物 )
+extra gold: select 姓名 性别 from 企业人物 where 年龄 > ( select min ( 年龄 ) from 企业人物 )
+
+index: 674
+db_id: 教材辅助参考书
+extra pred: select 名称 , 类型 from 参考书 where 适用阶段 != '高中'
+extra gold: select 名称 类型 from 参考书 where 适用年级 < ( select max ( 适用年级 ) from 参考书 )
+
+index: 679
+db_id: 洗衣机
+extra pred: select 所属公司 from 洗衣机品牌 where 市场份额 >= ( select avg ( 市场份额 ) from 洗衣机品牌 )
+extra gold: select 名称 所属公司 from 洗衣机品牌 where 市场份额 >= ( select avg ( 市场份额 ) from 洗衣机品牌 )
+
+index: 680
+db_id: 洗衣机
+extra pred: select T2.名称 , T2.所属公司 from 洗衣机品牌 as T1 join 洗衣机品牌 as T2 on T2.名称 == T2.名称 where T1.市场份额 > ( select min ( 市场份额 ) from T1 )
+extra gold: select 名称 所属公司 from 洗衣机品牌 where 市场份额 > ( select min ( 市场份额 ) from 洗衣机品牌 )
+
+index: 681
+db_id: 奥运会参赛队伍
+extra pred: select 举办城市 from 夏季奥运会 where 参赛国家数量 <= ( select avg ( 参赛国家数量 ) from 夏季奥运会 )
+extra gold: select 名称 举办城市 from 夏季奥运会 where 参赛国家数量 <= ( select avg ( 参赛国家数量 ) from 夏季奥运会 )
+
+index: 694
+db_id: 奥运会参赛队伍
+hard pred: select 名称 from 夏季奥运会 where 参赛国家数量 < ( select avg ( 参赛国家数量 ) from 夏季奥运会 where 举办国家id == '雅典' )
+hard gold: select 名称 from 夏季奥运会 where 参赛国家数量 < ( select avg ( 参赛国家数量 ) from 夏季奥运会 where 举办城市 = '雅典' )
+
+index: 720
+db_id: 奥运会参赛队伍
+hard pred: select 举办城市 from 夏季奥运会 group by 举办城市 having count ( * ) < 5
+hard gold: select 名称 from 夏季奥运会 where 举办城市 in ( select 举办城市 from 夏季奥运会 group by 举办城市 having count ( * ) < 5 )
+
+index: 721
+db_id: 友好城市
+hard pred: select 所属省份 from 城市 where 建交国家数量 >= 15 group by 所属省份 having count ( * ) == 5
+hard gold: select 城市 from 城市 where 所属省份 in ( select 所属省份 from 城市 group by 所属省份 having sum ( 建交国家数量 ) >= 15 )
+
+index: 724
+db_id: 企业融资
+easy pred: ( select 中文名 from 企业 order by 成立时间 asc limit 3 ) except ( select 中文名 from 企业 order by 注册资本 desc limit 5 )
+easy gold: SELECT * FROM (SELECT * FROM (  ( SELECT 中文名 from 企业 order by 成立时间 asc limit 3 ) ) INTERSECT SELECT * FROM ( ( SELECT 中文名 from 企业 order by 注册资本 asc limit 5 ) ))
+
+index: 725
+db_id: 枪击事件
+easy pred: select 姓名 from 韩国自杀的娱乐明星 order by 年龄 asc limit 3
+easy gold: SELECT * FROM (SELECT * FROM (  ( SELECT 姓名 from 韩国自杀的娱乐明星 order by 死亡时间 asc limit 3 ) ) INTERSECT SELECT * FROM ( ( SELECT 姓名 from 韩国自杀的娱乐明星 order by 年龄 asc limit 5 ) ))
+
+index: 726
+db_id: 洗衣机
+easy pred: select 名称 from 洗衣机品牌 order by 成立时间 asc limit 3
+easy gold: SELECT * FROM (SELECT * FROM (  ( SELECT 名称 from 洗衣机品牌 order by 成立时间 asc limit 3 ) ) INTERSECT SELECT * FROM ( ( SELECT 名称 from 洗衣机品牌 order by 市场份额 asc limit 5 ) ))
+
+index: 727
+db_id: 购书平台
+easy pred: ( select 名称 from 平台 order by 成立时间 asc limit 3 ) intersect ( select 名称 from 平台 order by 年营业额 asc limit 5 )
+easy gold: SELECT * FROM (SELECT * FROM (  ( SELECT 名称 from 平台 order by 成立时间 asc limit 3 ) ) INTERSECT SELECT * FROM ( ( SELECT 名称 from 平台 order by 年营业额 desc limit 5 ) ))
+
+index: 728
+db_id: 教材辅助参考书
+easy pred: ( select 名称 from 参考书 order by 适用年级 asc limit 3 ) intersect ( select 名称 from 参考书 order by 价格 asc limit 5 )
+easy gold: SELECT * FROM (SELECT * FROM (  ( SELECT 名称 from 参考书 order by 适用年级 desc limit 3 ) ) INTERSECT SELECT * FROM ( ( SELECT 名称 from 参考书 order by 价格 asc limit 5 ) ))
+
+index: 729
+db_id: 坚果
+easy pred: ( select 名称 from 坚果 order by 饱和脂肪含量 desc limit 3 ) intersect ( select 名称 from 坚果 order by 不饱和脂肪含量 asc limit 5 )
+easy gold: SELECT * FROM (SELECT * FROM (  ( SELECT 名称 from 坚果 order by 饱和脂肪含量 desc limit 3 ) ) INTERSECT SELECT * FROM ( ( SELECT 名称 from 坚果 order by 不饱和脂肪含量 asc limit 5 ) ))
+
+index: 730
+db_id: 奥运会参赛队伍
+easy pred: ( select 名称 from 夏季奥运会 order by 参赛国家数量 asc limit 3 ) intersect ( select 名称 from 夏季奥运会 order by 大项项目数 desc limit 5 )
+easy gold: SELECT * FROM (SELECT * FROM (  ( SELECT 名称 from 夏季奥运会 order by 参赛国家数量 asc limit 3 ) ) INTERSECT SELECT * FROM ( ( SELECT 名称 from 夏季奥运会 order by 大项项目数 desc limit 5 ) ))
+
+index: 731
+db_id: CCTV中国经济年度人物
+easy pred: ( select 名称 from 公司 order by 成立时间 asc limit 3 ) intersect ( select 名称 from 公司 order by 年营业额 desc limit 5 )
+easy gold: SELECT * FROM (SELECT * FROM (  ( SELECT 名称 from 公司 order by 成立时间 asc limit 3 ) ) INTERSECT SELECT * FROM ( ( SELECT 名称 from 公司 order by 年营业额 desc limit 5 ) ))
+
+index: 732
+db_id: 枪击事件
+easy pred: ( select 名称 from 国家 order by 人口数量 desc limit 3 ) intersect ( select 名称 from 国家 order by 民用枪支数 asc limit 5 )
+easy gold: SELECT * FROM (SELECT * FROM (  ( SELECT 名称 from 国家 order by 人口数量 desc limit 3 ) ) INTERSECT SELECT * FROM ( ( SELECT 名称 from 国家 order by 民用枪支数 asc limit 5 ) ))
+
+index: 733
+db_id: 教材辅助参考书
+easy pred: ( select 名称 from 参考书 order by 适用年级 desc limit 3 ) union ( select 名称 from 参考书 order by 价格 asc limit 5 )
+easy gold: SELECT * FROM (SELECT * FROM (  ( SELECT 名称 from 参考书 order by 适用年级 desc limit 3 ) ) UNION SELECT * FROM ( ( SELECT 名称 from 参考书 order by 价格 asc limit 5 ) ))
+
+index: 734
+db_id: 企业融资
+easy pred: ( select 中文名 from 企业 order by 成立时间 asc limit 3 ) union ( select 中文名 from 企业 order by 注册资本 desc limit 5 )
+easy gold: SELECT * FROM (SELECT * FROM (  ( SELECT 中文名 from 企业 order by 成立时间 asc limit 3 ) ) UNION SELECT * FROM ( ( SELECT 中文名 from 企业 order by 注册资本 desc limit 5 ) ))
+
+index: 735
+db_id: 枪击事件
+easy pred: ( select 姓名 from 韩国自杀的娱乐明星 order by 死亡时间 asc limit 3 ) union ( select 姓名 from 韩国自杀的娱乐明星 order by 年龄 asc limit 5 )
+easy gold: SELECT * FROM (SELECT * FROM (  ( SELECT 姓名 from 韩国自杀的娱乐明星 order by 死亡时间 asc limit 3 ) ) UNION SELECT * FROM ( ( SELECT 姓名 from 韩国自杀的娱乐明星 order by 年龄 asc limit 5 ) ))
+
+index: 736
+db_id: 欧洲杯球队
+easy pred: ( select 中文队名 from 球队 order by 成立时间 asc limit 3 ) union ( select 中文队名 from 球队 order by 容纳人数 desc limit 5 )
+easy gold: SELECT * FROM (SELECT * FROM (  ( SELECT 中文队名 from 球队 order by 成立时间 asc limit 3 ) ) UNION SELECT * FROM ( ( SELECT 中文队名 from 球队 order by 容纳人数 desc limit 5 ) ))
+
+index: 737
+db_id: CCTV中国经济年度人物
+easy pred: ( select 名称 from 公司 order by 年营业额 desc limit 3 ) union ( select 名称 from 公司 order by 员工数 asc limit 5 )
+easy gold: SELECT * FROM (SELECT * FROM (  ( SELECT 名称 from 公司 order by 年营业额 desc limit 3 ) ) UNION SELECT * FROM ( ( SELECT 名称 from 公司 order by 员工数 asc limit 5 ) ))
+
+index: 738
+db_id: 洗衣机
+easy pred: ( select 名称 from 洗衣机品牌 order by 成立时间 asc limit 3 ) union ( select 名称 from 洗衣机品牌 order by 市场份额 desc limit 5 )
+easy gold: SELECT * FROM (SELECT * FROM (  ( SELECT 名称 from 洗衣机品牌 order by 成立时间 asc limit 3 ) ) UNION SELECT * FROM ( ( SELECT 名称 from 洗衣机品牌 order by 市场份额 desc limit 5 ) ))
+
+index: 739
+db_id: 购书平台
+easy pred: ( select 名称 from 平台 order by 成立时间 asc limit 3 ) union ( select 名称 from 平台 order by 年营业额 desc limit 5 )
+easy gold: SELECT * FROM (SELECT * FROM (  ( SELECT 名称 from 平台 order by 成立时间 asc limit 3 ) ) UNION SELECT * FROM ( ( SELECT 名称 from 平台 order by 年营业额 desc limit 5 ) ))
+
+index: 740
+db_id: 坚果
+easy pred: ( select 名称 from 坚果 order by 饱和脂肪含量 asc limit 3 ) union ( select 名称 from 坚果 order by 不饱和脂肪含量 desc limit 5 )
+easy gold: SELECT * FROM (SELECT * FROM (  ( SELECT 名称 from 坚果 order by 饱和脂肪含量 asc limit 3 ) ) UNION SELECT * FROM ( ( SELECT 名称 from 坚果 order by 不饱和脂肪含量 desc limit 5 ) ))
+
+index: 741
+db_id: 城市财政收入
+easy pred: ( select 省份 from 各省财政收入 order by GDP总计(亿) asc limit 3 ) union ( select 省份 from 各省财政收入 order by 财政预算收入(亿) desc limit 5 )
+easy gold: SELECT * FROM (SELECT * FROM (  ( SELECT 省份 from 各省财政收入 order by `GDP总计(亿)` asc limit 3 ) ) UNION SELECT * FROM ( ( SELECT 省份 from 各省财政收入 order by `财政预算收入(亿)` desc limit 5 ) ))
+
+index: 742
+db_id: 奥运会参赛队伍
+easy pred: ( select 名称 from 夏季奥运会 order by 参赛国家数量 desc limit 3 ) union ( select 名称 from 夏季奥运会 order by 小项项目数 asc limit 5 )
+easy gold: SELECT * FROM (SELECT * FROM (  ( SELECT 名称 from 夏季奥运会 order by 参赛国家数量 desc limit 3 ) ) UNION SELECT * FROM ( ( SELECT 名称 from 夏季奥运会 order by 小项项目数 asc limit 5 ) ))
+
+index: 743
+db_id: 枪击事件
+easy pred: select 姓名 from 韩国自杀的娱乐明星 where 死亡时间 in ( select 死亡时间 from 韩国自杀的娱乐明星 order by 死亡时间 asc limit 3 ) and 年龄 not in ( select max ( 年龄 ) from 韩国自杀的娱乐明星 )
+easy gold: SELECT * FROM (SELECT * FROM (  ( SELECT 姓名 from 韩国自杀的娱乐明星 order by 死亡时间 asc limit 3 ) ) EXCEPT SELECT * FROM ( ( SELECT 姓名 from 韩国自杀的娱乐明星 order by 年龄 desc limit 5 ) ))
+
+index: 744
+db_id: 欧洲杯球队
+easy pred: ( select 中文队名 from 球队 order by 成立时间 asc limit 3 ) except ( select 中文队名 from 球队 order by 容纳人数 asc limit 5 )
+easy gold: SELECT * FROM (SELECT * FROM (  ( SELECT 中文队名 from 球队 order by 成立时间 asc limit 3 ) ) EXCEPT SELECT * FROM ( ( SELECT 中文队名 from 球队 order by 容纳人数 asc limit 5 ) ))
+
+index: 745
+db_id: 奥运会参赛队伍
+easy pred: ( select 名称 from 夏季奥运会 order by 参赛国家数量 asc limit 3 ) except ( select 名称 from 夏季奥运会 order by 大项项目数 desc limit 5 )
+easy gold: SELECT * FROM (SELECT * FROM (  ( SELECT 名称 from 夏季奥运会 order by 参赛国家数量 asc limit 3 ) ) EXCEPT SELECT * FROM ( ( SELECT 名称 from 夏季奥运会 order by 大项项目数 desc limit 5 ) ))
+
+index: 747
+db_id: 购书平台
+easy pred: ( select 名称 from 平台 order by 成立时间 asc limit 3 ) except ( select 名称 from 平台 order by 年营业额 asc limit 5 )
+easy gold: SELECT * FROM (SELECT * FROM (  ( SELECT 名称 from 平台 order by 成立时间 asc limit 3 ) ) EXCEPT SELECT * FROM ( ( SELECT 名称 from 平台 order by 年营业额 asc limit 5 ) ))
+
+index: 748
+db_id: 城市财政收入
+easy pred: ( select 省份 from 各省财政收入 order by GDP总计(亿) asc limit 3 ) except ( select 省份 from 各省财政收入 order by 财政预算同比增速 desc limit 5 )
+easy gold: SELECT * FROM (SELECT * FROM (  ( SELECT 省份 from 各省财政收入 order by `GDP总计(亿)` asc limit 3 ) ) EXCEPT SELECT * FROM ( ( SELECT 省份 from 各省财政收入 order by 财政预算同比增速 desc limit 5 ) ))
+
+index: 749
+db_id: CCTV中国经济年度人物
+easy pred: ( select 名称 from 公司 order by 成立时间 asc limit 3 ) except ( select 名称 from 公司 order by 年营业额 asc limit 5 )
+easy gold: SELECT * FROM (SELECT * FROM (  ( SELECT 名称 from 公司 order by 成立时间 asc limit 3 ) ) EXCEPT SELECT * FROM ( ( SELECT 名称 from 公司 order by 年营业额 asc limit 5 ) ))
+
+index: 750
+db_id: 打车软件
+easy pred: select app名称 from 打车APP order by 上线时间 asc limit 3
+easy gold: SELECT * FROM (SELECT * FROM (  ( SELECT app名称 from 打车APP order by 上线时间 asc limit 3 ) ) EXCEPT SELECT * FROM ( ( SELECT app名称 from 打车APP order by 覆盖城市数 desc limit 5 ) ))
+
+index: 751
+db_id: 坚果
+easy pred: ( select 名称 from 坚果 order by 饱和脂肪含量 asc limit 3 ) except ( select 名称 from 坚果 order by 饱和脂肪含量 desc limit 5 )
+easy gold: SELECT * FROM (SELECT * FROM (  ( SELECT 名称 from 坚果 order by 饱和脂肪含量 asc limit 3 ) ) EXCEPT SELECT * FROM ( ( SELECT 名称 from 坚果 order by 不饱和脂肪含量 desc limit 5 ) ))
+
+index: 752
+db_id: 中国卫视频道
+easy pred: ( select 名称 from 电视台 order by 开播时间 asc limit 3 ) except ( select 名称 from 电视台 where 上线时间 > '1998-01-01' )
+easy gold: SELECT * FROM (SELECT * FROM (  ( SELECT 名称 from 电视台 order by 开播时间 asc limit 3 ) ) EXCEPT SELECT * FROM ( ( SELECT 名称 from 电视台 where 上线时间 > '1998-01-01' ) ))
+
+index: 753
+db_id: 中国卫视频道
+easy pred: ( select 名称 from 电视台 where 开播时间 < '1997-01-01' ) except ( select 名称 from 电视台 order by 上线时间 asc limit 3 )
+easy gold: SELECT * FROM (SELECT * FROM (  ( SELECT 名称 from 电视台 where 开播时间 < '1997-01-01' ) ) EXCEPT SELECT * FROM ( ( SELECT 名称 from 电视台 order by 上线时间 asc limit 3 ) ))
+
+index: 754
+db_id: 枪击事件
+easy pred: select 姓名 from 韩国自杀的娱乐明星 where 死亡时间 > '2019-11-30' order by 年龄 desc limit 3
+easy gold: SELECT * FROM (SELECT * FROM (  ( SELECT 姓名 from 韩国自杀的娱乐明星 order by 年龄 desc limit 3 ) ) EXCEPT SELECT * FROM ( ( SELECT 姓名 from 韩国自杀的娱乐明星 where 死亡时间 < '2019-11-30' ) ))
+
+index: 755
+db_id: 枪击事件
+easy pred: select 姓名 from 韩国自杀的娱乐明星 where 年龄 > 180 and 死亡时间 <= '2019-11-30' order by 年龄 asc limit 3
+easy gold: SELECT * FROM (SELECT * FROM (  ( SELECT 姓名 from 韩国自杀的娱乐明星 order by 年龄 asc limit 3 ) ) EXCEPT SELECT * FROM ( ( SELECT 姓名 from 韩国自杀的娱乐明星 where 死亡时间 <= '2019-11-30' ) ))
+
+index: 756
+db_id: 教材辅助参考书
+easy pred: ( select 名称 from 参考书 where 适用年级 <= 3 ) except ( select 名称 from 参考书 order by 价格 asc limit 3 )
+easy gold: SELECT * FROM (SELECT * FROM (  ( SELECT 名称 from 参考书 where 适用年级 <= 3 ) ) EXCEPT SELECT * FROM ( ( SELECT 名称 from 参考书 order by 价格 asc limit 3 ) ))
+
+index: 757
+db_id: 教材辅助参考书
+easy pred: select 名称 from 参考书 where 适用年级 not in ( select 适用年级 from 参考书 where 价格 > 99 ) order by 适用年级 asc limit 3
+easy gold: SELECT * FROM (SELECT * FROM (  ( SELECT 名称 from 参考书 order by 适用年级 asc limit 3 ) ) EXCEPT SELECT * FROM ( ( SELECT 名称 from 参考书 where 价格 > 99 ) ))
+
+index: 758
+db_id: 欧洲杯球队
+easy pred: ( select 中文队名 from 球队 where 成立时间 > 1964 ) except ( select 中文队名 from 球队 order by 容纳人数 desc limit 3 )
+easy gold: SELECT * FROM (SELECT * FROM (  ( SELECT 中文队名 from 球队 where 成立时间 > 1964 ) ) EXCEPT SELECT * FROM ( ( SELECT 中文队名 from 球队 order by 容纳人数 desc limit 3 ) ))
+
+index: 760
+db_id: CCTV中国经济年度人物
+easy pred: ( select 名称 from 公司 order by 年营业额 desc limit 3 ) except ( select 名称 from 公司 where 成立时间 >= 2014 )
+easy gold: SELECT * FROM (SELECT * FROM (  ( SELECT 名称 from 公司 order by 年营业额 desc limit 3 ) ) EXCEPT SELECT * FROM ( ( SELECT 名称 from 公司 where 成立时间 >= 2014 ) ))
+
+index: 761
+db_id: CCTV中国经济年度人物
+easy pred: ( select 名称 from 公司 where 成立时间 < 2014 ) except ( select 名称 from 公司 order by 年营业额 asc limit 3 )
+easy gold: SELECT * FROM (SELECT * FROM (  ( SELECT 名称 from 公司 where 成立时间 < 2014 ) ) EXCEPT SELECT * FROM ( ( SELECT 名称 from 公司 order by 年营业额 asc limit 3 ) ))
+
+index: 762
+db_id: 洗衣机
+easy pred: ( select 名称 from 洗衣机品牌 where 市场份额 < 0.02 ) except ( select 名称 from 洗衣机品牌 order by `2018年营业额` desc limit 3 )
+easy gold: SELECT * FROM (SELECT * FROM (  ( SELECT 名称 from 洗衣机品牌 where 市场份额 < 0.02 ) ) EXCEPT SELECT * FROM ( ( SELECT 名称 from 洗衣机品牌 order by `2018年营业额` desc limit 3 ) ))
+
+index: 763
+db_id: 洗衣机
+easy pred: select 名称 from 洗衣机品牌 where 市场份额 > ( select max ( 市场份额 ) from 洗衣机品牌 where 成立时间 < 1955 )
+easy gold: SELECT * FROM (SELECT * FROM (  ( SELECT 名称 from 洗衣机品牌 order by 市场份额 desc limit 3 ) ) EXCEPT SELECT * FROM ( ( SELECT 名称 from 洗衣机品牌 where 成立时间 < 1955 ) ))
+
+index: 764
+db_id: 购书平台
+easy pred: ( select 名称 from 平台 where 年营业额 >= 14000000000 ) except ( select 名称 from 平台 order by 成立时间 asc limit 3 )
+easy gold: SELECT * FROM (SELECT * FROM (  ( SELECT 名称 from 平台 where 年营业额 >= 1400000000 ) ) EXCEPT SELECT * FROM ( ( SELECT 名称 from 平台 order by 成立时间 asc limit 3 ) ))
+
+index: 765
+db_id: 购书平台
+easy pred: ( select 名称 from 平台 where 成立时间 >= '2015-07-15' ) except ( select 名称 from 平台 order by 年营业额 asc limit 3 )
+easy gold: SELECT * FROM (SELECT * FROM (  ( SELECT 名称 from 平台 where 成立时间 >= '2015-07-15' ) ) EXCEPT SELECT * FROM ( ( SELECT 名称 from 平台 order by 年营业额 asc limit 3 ) ))
+
+index: 766
+db_id: 综艺节目
+easy pred: ( select 节目名称 from 综艺节目 where 首播时间 >= '2014-10-01' ) except ( select 节目名称 from 综艺节目 order by 播出时间 asc limit 3 )
+easy gold: SELECT * FROM (SELECT * FROM (  ( SELECT 节目名称 from 综艺节目 where 首播时间 >= '2014-10-01' ) ) EXCEPT SELECT * FROM ( ( SELECT 节目名称 from 综艺节目 order by 播出时间 asc limit 3 ) ))
+
+index: 767
+db_id: 综艺节目
+easy pred: ( select 节目名称 from 综艺节目 order by 首播时间 asc limit 3 ) except ( select 节目名称 from 综艺节目 where 播出时间 >= 22 )
+easy gold: SELECT * FROM (SELECT * FROM (  ( SELECT 节目名称 from 综艺节目 order by 首播时间 asc limit 3 ) ) EXCEPT SELECT * FROM ( ( SELECT 节目名称 from 综艺节目 where 播出时间 > '22:00' ) ))
+
+index: 768
+db_id: 城市财政收入
+easy pred: ( select 省份 from 各省财政收入 order by GDP总计(亿) asc limit 3 ) except ( select 省份 from 各省财政收入 where 预算支出额度(亿) > 0.05 )
+easy gold: SELECT * FROM (SELECT * FROM (  ( SELECT 省份 from 各省财政收入 order by `GDP总计(亿)` asc limit 3 ) ) EXCEPT SELECT * FROM ( ( SELECT 省份 from 各省财政收入 where 预算赤字率 > 0.05 ) ))
+
+index: 769
+db_id: 城市财政收入
+easy pred: ( select 省份 from 各省财政收入 order by GDP总计(亿) desc limit 3 ) except ( select 省份 from 各省财政收入 where 固定资产投资同比增速 >= -6 )
+easy gold: SELECT * FROM (SELECT * FROM (  ( SELECT 省份 from 各省财政收入 order by `GDP总计(亿)` desc limit 3 ) ) EXCEPT SELECT * FROM ( ( SELECT 省份 from 各省财政收入 where 固定资产投资同比增速 >= -6 ) ))
+
+index: 770
+db_id: 奥运会参赛队伍
+easy pred: ( select 名称 from 夏季奥运会 order by 参赛国家数量 asc limit 3 ) except ( select 名称 from 夏季奥运会 where 大项项目数 > 16 )
+easy gold: SELECT * FROM (SELECT * FROM (  ( SELECT 名称 from 夏季奥运会 order by 参赛国家数量 asc limit 3 ) ) EXCEPT SELECT * FROM ( ( SELECT 名称 from 夏季奥运会 where 大项项目数 > 16 ) ))
+
+index: 771
+db_id: 奥运会参赛队伍
+easy pred: ( select 名称 from 夏季奥运会 where 参赛国家数量 > 30 ) except ( select 名称 from 夏季奥运会 order by 大项项目数 desc limit 3 )
+easy gold: SELECT * FROM (SELECT * FROM (  ( SELECT 名称 from 夏季奥运会 where 参赛国家数量 > 30 ) ) EXCEPT SELECT * FROM ( ( SELECT 名称 from 夏季奥运会 order by 大项项目数 desc limit 3 ) ))
+
+index: 772
+db_id: 中国卫视频道
+easy pred: ( select 名称 from 电视台 order by 开播时间 asc limit 3 ) union ( select 名称 from 电视台 where 上线时间 > '1998-01-01' )
+easy gold: SELECT * FROM (SELECT * FROM (  ( SELECT 名称 from 电视台 order by 开播时间 asc limit 3 ) ) UNION SELECT * FROM ( ( SELECT 名称 from 电视台 where 上线时间 > '1998-01-01' ) ))
+
+index: 773
+db_id: 中国卫视频道
+easy pred: ( select 名称 from 电视台 where 开播时间 < '1997-01-01' ) union ( select 名称 from 电视台 order by 上线时间 asc limit 3 )
+easy gold: SELECT * FROM (SELECT * FROM (  ( SELECT 名称 from 电视台 where 开播时间 < '1997-01-01' ) ) UNION SELECT * FROM ( ( SELECT 名称 from 电视台 order by 上线时间 asc limit 3 ) ))
+
+index: 774
+db_id: 枪击事件
+easy pred: ( select 姓名 from 韩国自杀的娱乐明星 where 死亡时间 < '2019-11-30' ) union ( select 姓名 from 韩国自杀的娱乐明星 order by 年龄 desc limit 3 )
+easy gold: SELECT * FROM (SELECT * FROM (  ( SELECT 姓名 from 韩国自杀的娱乐明星 where 死亡时间 < '2019-11-30' ) ) UNION SELECT * FROM ( ( SELECT 姓名 from 韩国自杀的娱乐明星 order by 年龄 desc limit 3 ) ))
+
+index: 775
+db_id: 枪击事件
+easy pred: ( select 姓名 from 韩国自杀的娱乐明星 where 死亡时间 >= '2019-11-30' ) union ( select 姓名 from 韩国自杀的娱乐明星 order by 年龄 desc limit 3 )
+easy gold: SELECT * FROM (SELECT * FROM (  ( SELECT 姓名 from 韩国自杀的娱乐明星 where 死亡时间 >= '2019-11-30' ) ) UNION SELECT * FROM ( ( SELECT 姓名 from 韩国自杀的娱乐明星 order by 年龄 desc limit 3 ) ))
+
+index: 776
+db_id: 教材辅助参考书
+easy pred: ( select 名称 from 参考书 where 适用年级 >= 1 order by 价格 asc limit 3 ) union ( select 名称 from 参考书 order by 名称 asc limit 3 )
+easy gold: SELECT * FROM (SELECT * FROM (  ( SELECT 名称 from 参考书 where 适用年级 >= 1 ) ) UNION SELECT * FROM ( ( SELECT 名称 from 参考书 order by 价格 asc limit 3 ) ))
+
+index: 777
+db_id: 教材辅助参考书
+easy pred: ( select 名称 from 参考书 where 适用年级 < 3 ) union ( select 名称 from 参考书 order by 价格 desc limit 3 )
+easy gold: SELECT * FROM (SELECT * FROM (  ( SELECT 名称 from 参考书 where 适用年级 < 3 ) ) UNION SELECT * FROM ( ( SELECT 名称 from 参考书 order by 价格 desc limit 3 ) ))
+
+index: 778
+db_id: 欧洲杯球队
+easy pred: ( select 中文队名 from 球队 order by 成立时间 asc limit 3 ) union ( select 中文队名 from 球队 where 容纳人数 > 21000 )
+easy gold: SELECT * FROM (SELECT * FROM (  ( SELECT 中文队名 from 球队 order by 成立时间 asc limit 3 ) ) UNION SELECT * FROM ( ( SELECT 中文队名 from 球队 where 容纳人数 > 21000 ) ))
+
+index: 779
+db_id: 欧洲杯球队
+easy pred: ( select 中文队名 from 球队 where 容纳人数 >= 21000 ) union ( select 中文队名 from 球队 order by 成立时间 asc limit 3 )
+easy gold: SELECT * FROM (SELECT * FROM (  ( SELECT 中文队名 from 球队 where 容纳人数 >= 21000 ) ) UNION SELECT * FROM ( ( SELECT 中文队名 from 球队 order by 成立时间 asc limit 3 ) ))
+
+index: 780
+db_id: 奥运会参赛队伍
+easy pred: ( select 名称 from 夏季奥运会 where 参赛国家数量 > 30 ) union ( select 名称 from 夏季奥运会 order by 参赛运动员数量 desc limit 3 )
+easy gold: SELECT * FROM (SELECT * FROM (  ( SELECT 名称 from 夏季奥运会 where 参赛国家数量 > 30 ) ) UNION SELECT * FROM ( ( SELECT 名称 from 夏季奥运会 order by 参赛运动员数量 desc limit 3 ) ))
+
+index: 781
+db_id: 奥运会参赛队伍
+easy pred: ( select 名称 from 夏季奥运会 order by 参赛国家数量 desc limit 3 ) union ( select 名称 from 夏季奥运会 where 参赛运动员数量 < 500 )
+easy gold: SELECT * FROM (SELECT * FROM (  ( SELECT 名称 from 夏季奥运会 order by 参赛国家数量 desc limit 3 ) ) UNION SELECT * FROM ( ( SELECT 名称 from 夏季奥运会 where 参赛运动员数量 < 500 ) ))
+
+index: 782
+db_id: 洗衣机
+easy pred: ( select 名称 from 洗衣机品牌 where 成立时间 < 1955 ) union ( select 名称 from 洗衣机品牌 order by 市场份额 desc limit 3 )
+easy gold: SELECT * FROM (SELECT * FROM (  ( SELECT 名称 from 洗衣机品牌 where 成立时间 < 1955 ) ) UNION SELECT * FROM ( ( SELECT 名称 from 洗衣机品牌 order by 市场份额 desc limit 3 ) ))
+
+index: 783
+db_id: 洗衣机
+easy pred: ( select 名称 from 洗衣机品牌 where 市场份额 < 0.02 ) union ( select 名称 from 洗衣机品牌 order by 成立时间 asc limit 3 )
+easy gold: SELECT * FROM (SELECT * FROM (  ( SELECT 名称 from 洗衣机品牌 where 市场份额 < 0.02 ) ) UNION SELECT * FROM ( ( SELECT 名称 from 洗衣机品牌 order by 成立时间 asc limit 3 ) ))
+
+index: 784
+db_id: 购书平台
+easy pred: ( select 名称 from 平台 order by 年营业额 desc limit 3 ) union ( select 名称 from 平台 where 成立时间 > '2015-07-15' )
+easy gold: SELECT * FROM (SELECT * FROM (  ( SELECT 名称 from 平台 order by 年营业额 desc limit 3 ) ) UNION SELECT * FROM ( ( SELECT 名称 from 平台 where 成立时间 > '2015-07-15' ) ))
+
+index: 785
+db_id: 购书平台
+easy pred: ( select 名称 from 平台 where 成立时间 < '2015-07-15' ) union ( select 名称 from 平台 order by 年营业额 asc limit 3 )
+easy gold: SELECT * FROM (SELECT * FROM (  ( SELECT 名称 from 平台 where 成立时间 < '2015-07-15' ) ) UNION SELECT * FROM ( ( SELECT 名称 from 平台 order by 年营业额 asc limit 3 ) ))
+
+index: 786
+db_id: 综艺节目
+easy pred: ( select 节目名称 from 综艺节目 order by 首播时间 asc limit 3 ) union ( select 节目名称 from 综艺节目 where 播出时间 < '22:00' )
+easy gold: SELECT * FROM (SELECT * FROM (  ( SELECT 节目名称 from 综艺节目 order by 首播时间 asc limit 3 ) ) UNION SELECT * FROM ( ( SELECT 节目名称 from 综艺节目 where 播出时间 < '22:00' ) ))
+
+index: 787
+db_id: 综艺节目
+easy pred: ( select 节目名称 from 综艺节目 order by 首播时间 asc limit 3 ) union ( select 节目名称 from 综艺节目 where 播出时间 > '22:00' )
+easy gold: SELECT * FROM (SELECT * FROM (  ( SELECT 节目名称 from 综艺节目 order by 首播时间 asc limit 3 ) ) UNION SELECT * FROM ( ( SELECT 节目名称 from 综艺节目 where 播出时间 > '22:00' ) ))
+
+index: 788
+db_id: 坚果
+easy pred: ( select 名称 from 坚果 order by 饱和脂肪含量 asc limit 3 ) union ( select 名称 from 坚果 where 每100克热量 <= 600000 )
+easy gold: SELECT * FROM (SELECT * FROM (  ( SELECT 名称 from 坚果 order by 饱和脂肪含量 asc limit 3 ) ) UNION SELECT * FROM ( ( SELECT 名称 from 坚果 where 每100克热量 <= 600 ) ))
+
+index: 789
+db_id: 坚果
+easy pred: ( select 名称 from 坚果 order by 饱和脂肪含量 asc limit 3 ) union ( select 名称 from 坚果 where 不饱和脂肪含量 >= 51 )
+easy gold: SELECT * FROM (SELECT * FROM (  ( SELECT 名称 from 坚果 order by 饱和脂肪含量 asc limit 3 ) ) UNION SELECT * FROM ( ( SELECT 名称 from 坚果 where 不饱和脂肪含量 >= 51 ) ))
+
+index: 790
+db_id: 城市财政收入
+easy pred: ( select 省份 from 各省财政收入 order by GDP总计(亿) asc limit 3 ) union ( select 省份 from 各省财政收入 where 固定资产投资同比增速 > -6 )
+easy gold: SELECT * FROM (SELECT * FROM (  ( SELECT 省份 from 各省财政收入 order by `GDP总计(亿)` asc limit 3 ) ) UNION SELECT * FROM ( ( SELECT 省份 from 各省财政收入 where 固定资产投资同比增速 > -6 ) ))
+
+index: 791
+db_id: 城市财政收入
+easy pred: ( select 省份 from 各省财政收入 order by GDP总计(亿) asc limit 3 ) union ( select 省份 from 各省财政收入 where 财政预算同比增速 < -16 )
+easy gold: SELECT * FROM (SELECT * FROM (  ( SELECT 省份 from 各省财政收入 order by `GDP总计(亿)` asc limit 3 ) ) UNION SELECT * FROM ( ( SELECT 省份 from 各省财政收入 where 财政预算同比增速 < -0.16 ) ))
+
+index: 792
+db_id: CCTV中国经济年度人物
+easy pred: ( select 名称 from 公司 where 年营业额 >= 20000000 ) union ( select 名称 from 公司 order by 成立时间 asc limit 3 )
+easy gold: SELECT * FROM (SELECT * FROM (  ( SELECT 名称 from 公司 where 年营业额 >= 20000000 ) ) UNION SELECT * FROM ( ( SELECT 名称 from 公司 order by 成立时间 asc limit 3 ) ))
+
+index: 793
+db_id: CCTV中国经济年度人物
+easy pred: ( select 名称 from 公司 where 成立时间 < 2014 ) union ( select 名称 from 公司 order by 年营业额 asc limit 3 )
+easy gold: SELECT * FROM (SELECT * FROM (  ( SELECT 名称 from 公司 where 成立时间 < 2014 ) ) UNION SELECT * FROM ( ( SELECT 名称 from 公司 order by 年营业额 asc limit 3 ) ))
+
+index: 794
+db_id: 打车软件
+easy pred: ( select app名称 from 打车APP order by 上线时间 asc limit 3 ) union ( select app名称 from 打车APP where 覆盖城市数 <= 100 )
+easy gold: SELECT * FROM (SELECT * FROM (  ( SELECT app名称 from 打车APP order by 上线时间 asc limit 3 ) ) UNION SELECT * FROM ( ( SELECT app名称 from 打车APP where 覆盖城市数 <= 100 ) ))
+
+index: 795
+db_id: 打车软件
+easy pred: ( select app名称 from 打车APP where 上线时间 >= 2014 or 覆盖城市数 <= 3 ) union ( select app名称 from 打车APP order by 服务用户数量 desc limit 3 )
+easy gold: SELECT * FROM (SELECT * FROM (  ( SELECT app名称 from 打车APP where 上线时间 >= 2014 ) ) UNION SELECT * FROM ( ( SELECT app名称 from 打车APP order by 覆盖城市数 asc limit 3 ) ))
+
+index: 796
+db_id: 城市财政收入
+easy pred: select sum ( 一线城市累计同比 ) from `300城土地供给` where 年份 < 2017
+easy gold: select 一线城市累计同比 from `300城土地供给` where 年份 < 2017
+
+index: 797
+db_id: 城市财政收入
+easy pred: select sum ( 一线城市累计同比 ) from `300城土地供给` where 年份 > 2017
+easy gold: select 一线城市累计同比 from `300城土地供给` where 年份 > 2017
+
+index: 798
+db_id: 城市财政收入
+easy pred: select sum ( 一线城市累计同比 ) from `300城土地供给` where 年份 <= 2017
+easy gold: select 一线城市累计同比 from `300城土地供给` where 年份 <= 2017
+
+index: 799
+db_id: 城市财政收入
+easy pred: select sum ( 一线城市累计同比 ) from `300城土地供给` where 一线城市累计同比 >= 2017
+easy gold: select 一线城市累计同比 from `300城土地供给` where 年份 >= 2017
+
+index: 803
+db_id: 城市财政收入
+easy pred: select sum ( 成交建筑面积 ) from `300城土地成交` where 年份 < 2018
+easy gold: select 成交建筑面积 from `300城土地成交` where 年份 < 2018
+
+index: 810
+db_id: 打车软件
+medium pred: select 词条id from 打车APP where TIME_NOW - 上线时间 > 13 or 覆盖城市数 != 100
+medium gold: select app名称 from 打车APP where CURRENT_TIMESTAMP - 上线时间 > 13 or 覆盖城市数 != 100
+
+index: 811
+db_id: 打车软件
+medium pred: select 词条id from 打车APP where TIME_NOW - 上线时间 != 17 and 覆盖城市数 <= 100
+medium gold: select app名称 from 打车APP where CURRENT_TIMESTAMP - 上线时间 != 17 and 覆盖城市数 <= 100
+
+index: 812
+db_id: 打车软件
+medium pred: select 词条id from 打车APP where TIME_NOW - 上线时间 <= 15 or 覆盖城市数 != 100
+medium gold: select app名称 from 打车APP where CURRENT_TIMESTAMP - 上线时间 <= 15 or 覆盖城市数 != 100
+
+index: 813
+db_id: 打车软件
+medium pred: select 词条id from 打车APP where TIME_NOW - 上线时间 < 5 or 覆盖城市数 == 100
+medium gold: select app名称 from 打车APP where CURRENT_TIMESTAMP - 上线时间 < 5 or 覆盖城市数 = 100
+
+index: 814
+db_id: 打车软件
+medium pred: select 词条id from 打车APP where TIME_NOW - 上线时间 <= 11 or 覆盖城市数 < 100
+medium gold: select app名称 from 打车APP where CURRENT_TIMESTAMP - 上线时间 <= 11 or 覆盖城市数 < 100
+
+index: 815
+db_id: 打车软件
+medium pred: select 词条id from 打车APP where TIME_NOW - 上线时间 <= 3 and 覆盖城市数 <= 100
+medium gold: select app名称 from 打车APP where CURRENT_TIMESTAMP - 上线时间 <= 3 and 覆盖城市数 <= 100
+
+index: 816
+db_id: 打车软件
+medium pred: select 词条id from 打车APP where TIME_NOW - 上线时间 > 8 or 覆盖城市数 >= 100
+medium gold: select app名称 from 打车APP where CURRENT_TIMESTAMP - 上线时间 > 18 or 覆盖城市数 >= 100
+
+index: 817
+db_id: 打车软件
+medium pred: select 词条id from 打车APP where 上线时间 + 服务用户数量 == 10 and 覆盖城市数 >= 100
+medium gold: select app名称 from 打车APP where CURRENT_TIMESTAMP - 上线时间 = 10 and 覆盖城市数 >= 100
+
+index: 818
+db_id: 打车软件
+medium pred: select 词条id , 所属公司 from 打车APP where 上线时间 + 覆盖城市数 != 13
+medium gold: select app名称 所属公司 from 打车APP where CURRENT_TIMESTAMP - 上线时间 != 13
+
+index: 819
+db_id: 打车软件
+medium pred: select 词条id from 打车APP where 上线时间 < 14 and 覆盖城市数 <= 100
+medium gold: select app名称 from 打车APP where CURRENT_TIMESTAMP - 上线时间 < 14 and 覆盖城市数 <= 100
+
+index: 820
+db_id: 打车软件
+medium pred: select 词条id from 打车APP where TIME_NOW - 上线时间 == 2 and 覆盖城市数 < 100
+medium gold: select app名称 from 打车APP where CURRENT_TIMESTAMP - 上线时间 = 2 and 覆盖城市数 < 100
+
+index: 821
+db_id: 打车软件
+easy pred: select 词条id from 打车APP where 上线时间 + 服务用户数量 != 6
+easy gold: select app名称 from 打车APP where CURRENT_TIMESTAMP - 上线时间 != 6
+
+index: 823
+db_id: 打车软件
+medium pred: select 词条id from 打车APP where TIME_NOW - 上线时间 == 14 or 覆盖城市数 != 100
+medium gold: select app名称 from 打车APP where CURRENT_TIMESTAMP - 上线时间 = 14 or 覆盖城市数 != 100
+
+index: 824
+db_id: 打车软件
+medium pred: select 词条id from 打车APP where TIME_NOW - 上线时间 != 3 and 覆盖城市数 > 100
+medium gold: select app名称 from 打车APP where CURRENT_TIMESTAMP - 上线时间 != 3 and 覆盖城市数 > 100
+
+index: 825
+db_id: 打车软件
+medium pred: select 词条id from 打车APP where TIME_NOW - 上线时间 >= 18 and 覆盖城市数 >= 100
+medium gold: select app名称 from 打车APP where CURRENT_TIMESTAMP - 上线时间 >= 18 and 覆盖城市数 >= 100
+
+index: 826
+db_id: 打车软件
+medium pred: select 词条id from 打车APP where TIME_NOW - 上线时间 > 20 and 覆盖城市数 == 100
+medium gold: select app名称 from 打车APP where CURRENT_TIMESTAMP - 上线时间 > 20 and 覆盖城市数 = 100
+
+index: 827
+db_id: 打车软件
+medium pred: select 词条id from 打车APP where TIME_NOW - 上线时间 > 12 and 覆盖城市数 > 100
+medium gold: select app名称 from 打车APP where CURRENT_TIMESTAMP - 上线时间 > 12 and 覆盖城市数 > 100
+
+index: 830
+db_id: CCTV中国经济年度人物
+medium pred: select 名称 from 公司 where TIME_NOW - 成立时间 != 11 or 年营业额 > 20000000
+medium gold: select 名称 from 公司 where CURRENT_TIMESTAMP - 成立时间 != 11 or 年营业额 > 20000000
+
+index: 831
+db_id: CCTV中国经济年度人物
+medium pred: select 名称 from 公司 where TIME_NOW - 成立时间 == 1 and 年营业额 <= 20000000
+medium gold: select 名称 from 公司 where CURRENT_TIMESTAMP - 成立时间 = 1 and 年营业额 <= 20000000
+
+index: 832
+db_id: CCTV中国经济年度人物
+medium pred: select 名称 from 公司 where TIME_NOW - 成立时间 < 14 and 年营业额 > 20000000
+medium gold: select 名称 from 公司 where CURRENT_TIMESTAMP - 成立时间 < 14 and 年营业额 > 20000000
+
+index: 833
+db_id: CCTV中国经济年度人物
+medium pred: select 名称 from 公司 where TIME_NOW - 成立时间 >= 4 and 年营业额 == 20000000
+medium gold: select 名称 from 公司 where CURRENT_TIMESTAMP - 成立时间 >= 4 and 年营业额 = 20000000
+
+index: 834
+db_id: CCTV中国经济年度人物
+medium pred: select 名称 from 公司 where TIME_NOW - 成立时间 != 12 or 年营业额 != 20000000
+medium gold: select 名称 from 公司 where CURRENT_TIMESTAMP - 成立时间 != 12 or 年营业额 != 20000000
+
+index: 835
+db_id: CCTV中国经济年度人物
+easy pred: select 名称 from 公司 where TIME_NOW - 成立时间 <= 8
+easy gold: select 名称 from 公司 where CURRENT_TIMESTAMP - 成立时间 <= 8
+
+index: 836
+db_id: CCTV中国经济年度人物
+medium pred: select 名称 from 公司 where TIME_NOW - 成立时间 >= 13 or 年营业额 > 20000000
+medium gold: select 名称 from 公司 where CURRENT_TIMESTAMP - 成立时间 >= 13 or 年营业额 > 20000000
+
+index: 837
+db_id: CCTV中国经济年度人物
+medium pred: select 名称 from 公司 where TIME_NOW - 成立时间 != 12 and 年营业额 == 2000000
+medium gold: select 名称 from 公司 where CURRENT_TIMESTAMP - 成立时间 != 12 and 年营业额 = 20000000
+
+index: 838
+db_id: CCTV中国经济年度人物
+medium pred: select 名称 from 公司 where TIME_NOW - 成立时间 <= 18 or 年营业额 != 20000000
+medium gold: select 名称 from 公司 where CURRENT_TIMESTAMP - 成立时间 <= 18 or 年营业额 != 20000000
+
+index: 839
+db_id: CCTV中国经济年度人物
+medium pred: select 名称 from 公司 where TIME_NOW - 成立时间 < 8 or 年营业额 == 20000000
+medium gold: select 名称 from 公司 where CURRENT_TIMESTAMP - 成立时间 < 8 or 年营业额 = 20000000
+
+index: 840
+db_id: CCTV中国经济年度人物
+medium pred: select 名称 from 公司 where TIME_NOW - 成立时间 <= 15 and 年营业额 >= 20000000
+medium gold: select 名称 from 公司 where CURRENT_TIMESTAMP - 成立时间 <= 15 and 年营业额 = 20000000
+
+index: 841
+db_id: CCTV中国经济年度人物
+medium pred: select 名称 from 公司 where TIME_NOW - 成立时间 < 13 and 年营业额 < 20000000
+medium gold: select 名称 from 公司 where CURRENT_TIMESTAMP - 成立时间 < 13 and 年营业额 < 20000000
+
+index: 842
+db_id: CCTV中国经济年度人物
+easy pred: select 名称 from 公司 where TIME_NOW - 成立时间 == 16
+easy gold: select 名称 from 公司 where CURRENT_TIMESTAMP - 成立时间 = 16
+
+index: 843
+db_id: CCTV中国经济年度人物
+medium pred: select 名称 from 公司 where TIME_NOW - 成立时间 > 11 or 年营业额 != 20000000
+medium gold: select 名称 from 公司 where CURRENT_TIMESTAMP - 成立时间 > 11 or 年营业额 != 20000000
+
+index: 844
+db_id: CCTV中国经济年度人物
+medium pred: select 名称 from 公司 where TIME_NOW - 成立时间 != 20 or 年营业额 <= 20000000
+medium gold: select 名称 from 公司 where CURRENT_TIMESTAMP - 成立时间 != 20 or 年营业额 <= 20000000
+
+index: 845
+db_id: CCTV中国经济年度人物
+medium pred: select 名称 from 公司 where TIME_NOW - 成立时间 > 1 and 年营业额 != 20000000
+medium gold: select 名称 from 公司 where CURRENT_TIMESTAMP - 成立时间 > 1 and 年营业额 != 20000000
+
+index: 846
+db_id: CCTV中国经济年度人物
+medium pred: select 名称 from 公司 where TIME_NOW - 成立时间 != 4 and 年营业额 >= 20000000
+medium gold: select 名称 from 公司 where CURRENT_TIMESTAMP - 成立时间 != 4 and 年营业额 >= 20000000
+
+index: 847
+db_id: CCTV中国经济年度人物
+medium pred: select 名称 from 公司 where TIME_NOW - 成立时间 > 9 and 年营业额 >= 20000000
+medium gold: select 名称 from 公司 where CURRENT_TIMESTAMP - 成立时间 > 9 and 年营业额 >= 20000000
+
+index: 848
+db_id: CCTV中国经济年度人物
+medium pred: select 名称 from 公司 where TIME_NOW - 成立时间 > 15 and 年营业额 > 2000000
+medium gold: select 名称 from 公司 where CURRENT_TIMESTAMP - 成立时间 > 15 and 年营业额 > 20000000
+
+index: 849
+db_id: CCTV中国经济年度人物
+medium pred: select 名称 from 公司 where TIME_NOW - 成立时间 <= 17 or 年营业额 >= 20000000
+medium gold: select 名称 from 公司 where CURRENT_TIMESTAMP - 成立时间 <= 17 or 年营业额 >= 20000000
+
+index: 850
+db_id: 购书平台
+medium pred: select 名称 from 平台 where TIME_NOW - 成立时间 < 19 or 年营业额 >= 1400000000
+medium gold: select 名称 from 平台 where CURRENT_TIMESTAMP - 成立时间 < 19 or 年营业额 >= 1400000000
+
+index: 851
+db_id: 购书平台
+medium pred: select 名称 from 平台 where 年营业额 == 1400000000 or 成立时间 <= 10
+medium gold: select 名称 from 平台 where CURRENT_TIMESTAMP - 成立时间 <= 10 or 年营业额 = 1400000000
+
+index: 853
+db_id: 购书平台
+medium pred: select 名称 from 平台 where TIME_NOW - 成立时间 >= 4 and 年营业额 >= 1400000000
+medium gold: select 名称 from 平台 where CURRENT_TIMESTAMP - 成立时间 >= 4 and 年营业额 >= 1400000000
+
+index: 854
+db_id: 购书平台
+easy pred: select 名称 from 平台 where TIME_NOW - 成立时间 >= 1
+easy gold: select 名称 from 平台 where CURRENT_TIMESTAMP - 成立时间 >= 1
+
+index: 855
+db_id: 购书平台
+medium pred: select 名称 from 平台 where TIME_NOW - 成立时间 >= 15 or 年营业额 == 1400000000
+medium gold: select 名称 from 平台 where CURRENT_TIMESTAMP - 成立时间 >= 15 or 年营业额 = 1400000000
+
+index: 856
+db_id: 购书平台
+easy pred: select 名称 from 平台 where TIME_NOW - 成立时间 != 2
+easy gold: select 名称 from 平台 where CURRENT_TIMESTAMP - 成立时间 != 2
+
+index: 859
+db_id: 购书平台
+medium pred: select 名称 from 平台 where TIME_NOW - 成立时间 >= 15 or 年营业额 <= 1400000000
+medium gold: select 名称 from 平台 where CURRENT_TIMESTAMP - 成立时间 >= 15 or 年营业额 <= 1400000000
+
+index: 860
+db_id: 购书平台
+medium pred: select 名称 from 平台 where TIME_NOW - 成立时间 != 15 and 年营业额 >= 1400000000
+medium gold: select 名称 from 平台 where CURRENT_TIMESTAMP - 成立时间 != 15 and 年营业额 >= 1400000000
+
+index: 861
+db_id: 购书平台
+medium pred: select 名称 from 平台 where TIME_NOW - 成立时间 < 1 or 年营业额 <= 1400000000
+medium gold: select 名称 from 平台 where CURRENT_TIMESTAMP - 成立时间 < 1 or 年营业额 <= 1400000000
+
+index: 862
+db_id: 购书平台
+medium pred: select 名称 from 平台 where TIME_NOW - 成立时间 != 6 and 年营业额 != 1400000000
+medium gold: select 名称 from 平台 where CURRENT_TIMESTAMP - 成立时间 != 6 and 年营业额 != 1400000000
+
+index: 863
+db_id: 购书平台
+medium pred: select 名称 from 平台 where TIME_NOW - 成立时间 >= 2 and 年营业额 <= 1400000000
+medium gold: select 名称 from 平台 where CURRENT_TIMESTAMP - 成立时间 >= 2 and 年营业额 <= 1400000000
+
+index: 864
+db_id: 购书平台
+medium pred: select 名称 from 平台 where TIME_NOW - 成立时间 != 3 and 年营业额 <= 1400000000
+medium gold: select 名称 from 平台 where CURRENT_TIMESTAMP - 成立时间 != 3 and 年营业额 <= 1400000000
+
+index: 865
+db_id: 购书平台
+medium pred: select 名称 from 平台 where TIME_NOW - 成立时间 < 4 and 年营业额 < 1400000000
+medium gold: select 名称 from 平台 where CURRENT_TIMESTAMP - 成立时间 < 4 and 年营业额 < 1400000000
+
+index: 866
+db_id: 购书平台
+medium pred: select 名称 from 平台 where TIME_NOW - 成立时间 <= 13 and 年营业额 >= 1400000000
+medium gold: select 名称 from 平台 where CURRENT_TIMESTAMP - 成立时间 <= 13 and 年营业额 >= 1400000000
+
+index: 867
+db_id: 购书平台
+medium pred: select 名称 from 平台 where TIME_NOW - 成立时间 > 2 or 年营业额 == 1400000000
+medium gold: select 名称 from 平台 where CURRENT_TIMESTAMP - 成立时间 > 2 or 年营业额 = 1400000000
+
+index: 868
+db_id: 购书平台
+medium pred: select 名称 from 平台 where TIME_NOW - 成立时间 != 19 and 年营业额 > 1400000000
+medium gold: select 名称 from 平台 where CURRENT_TIMESTAMP - 成立时间 != 19 and 年营业额 > 1400000000
+
+index: 869
+db_id: 购书平台
+medium pred: select 名称 from 平台 where TIME_NOW - 成立时间 == 8 or 年营业额 != 1400000000
+medium gold: select 名称 from 平台 where CURRENT_TIMESTAMP - 成立时间 = 8 or 年营业额 != 1400000000
+
+index: 870
+db_id: 洗衣机
+medium pred: select 名称 , 所属公司 from 洗衣机品牌 where 成立时间 != 18
+medium gold: select 名称 所属公司 from 洗衣机品牌 where CURRENT_TIMESTAMP - 成立时间 != 18
+
+index: 871
+db_id: 洗衣机
+medium pred: select 名称 from 洗衣机品牌 where TIME_NOW - 成立时间 <= 13 or 市场份额 == 0.02
+medium gold: select 名称 from 洗衣机品牌 where CURRENT_TIMESTAMP - 成立时间 <= 13 or 市场份额 = 0.02
+
+index: 872
+db_id: 洗衣机
+medium pred: select 名称 from 洗衣机品牌 where TIME_NOW - 成立时间 >= 7 or 市场份额 >= 0.02
+medium gold: select 名称 from 洗衣机品牌 where CURRENT_TIMESTAMP - 成立时间 >= 7 or 市场份额 >= 0.02
+
+index: 873
+db_id: 洗衣机
+easy pred: select 名称 from 洗衣机品牌 where TIME_NOW - 成立时间 <= 18
+easy gold: select 名称 from 洗衣机品牌 where CURRENT_TIMESTAMP - 成立时间 <= 18
+
+index: 874
+db_id: 洗衣机
+medium pred: select 名称 from 洗衣机品牌 where TIME_NOW - 成立时间 < 5 and 市场份额 <= 0.02
+medium gold: select 名称 from 洗衣机品牌 where CURRENT_TIMESTAMP - 成立时间 < 5 and 市场份额 <= 0.02
+
+index: 876
+db_id: 洗衣机
+medium pred: select 名称 from 洗衣机品牌 where TIME_NOW - 成立时间 <= 4 and 市场份额 < 0.02
+medium gold: select 名称 from 洗衣机品牌 where CURRENT_TIMESTAMP - 成立时间 <= 4 and 市场份额 < 0.02
+
+index: 877
+db_id: 洗衣机
+medium pred: select 名称 from 洗衣机品牌 where TIME_NOW - 成立时间 != 12 or 市场份额 > 0.02
+medium gold: select 名称 from 洗衣机品牌 where CURRENT_TIMESTAMP - 成立时间 != 12 and 市场份额 > 0.02
+
+index: 878
+db_id: 洗衣机
+medium pred: select 名称 from 洗衣机品牌 where TIME_NOW - 成立时间 != 13 or 市场份额 <= 0.02
+medium gold: select 名称 from 洗衣机品牌 where CURRENT_TIMESTAMP - 成立时间 != 13 or 市场份额 <= 0.02
+
+index: 879
+db_id: 洗衣机
+medium pred: select 名称 from 洗衣机品牌 where TIME_NOW - 成立时间 == 1 or 市场份额 > 0.02
+medium gold: select 名称 from 洗衣机品牌 where CURRENT_TIMESTAMP - 成立时间 = 1 or 市场份额 > 0.02
+
+index: 880
+db_id: 洗衣机
+medium pred: select 名称 from 洗衣机品牌 where TIME_NOW - 成立时间 <= 4 and 市场份额 <= 0.02
+medium gold: select 名称 from 洗衣机品牌 where CURRENT_TIMESTAMP - 成立时间 <= 4 and 市场份额 <= 0.02
+
+index: 881
+db_id: 洗衣机
+medium pred: select 名称 from 洗衣机品牌 where TIME_NOW - 成立时间 > 4 and 市场份额 <= 0.02
+medium gold: select 名称 from 洗衣机品牌 where CURRENT_TIMESTAMP - 成立时间 > 4 and 市场份额 <= 0.02
+
+index: 882
+db_id: 洗衣机
+medium pred: select 名称 from 洗衣机品牌 where TIME_NOW - 成立时间 > 3 or 市场份额 <= 0.02
+medium gold: select 名称 from 洗衣机品牌 where CURRENT_TIMESTAMP - 成立时间 > 3 or 市场份额 <= 0.02
+
+index: 883
+db_id: 洗衣机
+medium pred: select 名称 from 洗衣机品牌 where TIME_NOW - 成立时间 == 4 or 市场份额 == 0.02
+medium gold: select 名称 from 洗衣机品牌 where CURRENT_TIMESTAMP - 成立时间 = 4 or 市场份额 = 0.02
+
+index: 886
+db_id: 洗衣机
+medium pred: select 名称 from 洗衣机品牌 where TIME_NOW - 成立时间 >= 1 and 所属公司 != '三星集团'
+medium gold: select 名称 from 洗衣机品牌 where CURRENT_TIMESTAMP - 成立时间 >= 1 and 所属公司 != '三星集团'
+
+index: 887
+db_id: 洗衣机
+medium pred: select 名称 from 洗衣机品牌 where TIME_NOW - 成立时间 > 16 and 市场份额 != 0.02
+medium gold: select 名称 from 洗衣机品牌 where CURRENT_TIMESTAMP - 成立时间 > 16 and 市场份额 != 0.02
+
+index: 888
+db_id: 洗衣机
+medium pred: select 名称 from 洗衣机品牌 where TIME_NOW - 成立时间 <= 7 or 市场份额 >= 0.02
+medium gold: select 名称 from 洗衣机品牌 where CURRENT_TIMESTAMP - 成立时间 <= 7 or 市场份额 >= 0.02
+
+index: 889
+db_id: 洗衣机
+easy pred: select 名称 from 洗衣机品牌 where TIME_NOW - 成立时间 < 5
+easy gold: select 名称 from 洗衣机品牌 where CURRENT_TIMESTAMP - 成立时间 < 5
+
+index: 890
+db_id: 企业融资
+medium pred: select 中文名 from 企业 where TIME_NOW - 成立时间 <= 1 or 注册资本 != 1000000
+medium gold: select 中文名 from 企业 where CURRENT_TIMESTAMP - 成立时间 <= 1 or 注册资本 != 1000000
+
+index: 891
+db_id: 企业融资
+medium pred: select 中文名 from 企业 where TIME_NOW - 成立时间 >= 5 and 法定代表人 != '张超'
+medium gold: select 中文名 from 企业 where CURRENT_TIMESTAMP - 成立时间 >= 5 and 法定代表人 != '张超'
+
+index: 892
+db_id: 企业融资
+medium pred: select 中文名 from 企业 where TIME_NOW - 成立时间 >= 3 or 注册资本 <= 1000000
+medium gold: select 中文名 from 企业 where CURRENT_TIMESTAMP - 成立时间 >= 3 or 注册资本 <= 1000000
+
+index: 893
+db_id: 企业融资
+medium pred: select 中文名 , 法定代表人 from 企业 where 成立时间 < 14
+medium gold: select 中文名 法定代表人 from 企业 where CURRENT_TIMESTAMP - 成立时间 < 14
+
+index: 894
+db_id: 企业融资
+medium pred: select 中文名 from 企业 where TIME_NOW - 成立时间 > 7 or 注册资本 == 1000000
+medium gold: select 中文名 from 企业 where CURRENT_TIMESTAMP - 成立时间 > 7 or 注册资本 = 1000000
+
+index: 895
+db_id: 企业融资
+medium pred: select 中文名 from 企业 where TIME_NOW - 成立时间 > 2 and 注册资本 != 1000000
+medium gold: select 中文名 from 企业 where CURRENT_TIMESTAMP - 成立时间 > 2 and 注册资本 != 1000000
+
+index: 896
+db_id: 企业融资
+medium pred: select 中文名 from 企业 where TIME_NOW - 成立时间 <= 9 and 注册资本 < 1000000
+medium gold: select 中文名 from 企业 where CURRENT_TIMESTAMP - 成立时间 <= 9 and 注册资本 < 1000000
+
+index: 897
+db_id: 企业融资
+medium pred: select 中文名 from 企业 where TIME_NOW - 成立时间 == 4 and 注册资本 != 1000000
+medium gold: select 中文名 from 企业 where CURRENT_TIMESTAMP - 成立时间 = 4 and 注册资本 != 1000000
+
+index: 898
+db_id: 企业融资
+medium pred: select 中文名 from 企业 where TIME_NOW - 成立时间 >= 15 and 注册资本 == 1000000
+medium gold: select 中文名 from 企业 where CURRENT_TIMESTAMP - 成立时间 >= 15 and 注册资本 = 1000000
+
+index: 899
+db_id: 企业融资
+medium pred: select 中文名 from 企业 where TIME_NOW - 成立时间 != 20 and 注册资本 != 1000000
+medium gold: select 中文名 from 企业 where CURRENT_TIMESTAMP - 成立时间 != 20 and 注册资本 != 1000000
+
+index: 901
+db_id: 企业融资
+medium pred: select 中文名 from 企业 where TIME_NOW - 成立时间 < 14 and 注册资本 < 1000000
+medium gold: select 中文名 from 企业 where CURRENT_TIMESTAMP - 成立时间 < 14 and 注册资本 < 1000000
+
+index: 902
+db_id: 企业融资
+medium pred: select 中文名 from 企业 where TIME_NOW - 成立时间 > 15 and 注册资本 == 1000000
+medium gold: select 中文名 from 企业 where CURRENT_TIMESTAMP - 成立时间 > 15 and 注册资本 = 1000000
+
+index: 903
+db_id: 企业融资
+medium pred: select 中文名 from 企业 where TIME_NOW - 成立时间 == 12 or 注册资本 != 1000000
+medium gold: select 中文名 from 企业 where CURRENT_TIMESTAMP - 成立时间 = 12 or 注册资本 != 1000000
+
+index: 904
+db_id: 企业融资
+medium pred: select 中文名 from 企业 where TIME_NOW - 成立时间 >= 8 and 注册资本 < 100000000
+medium gold: select 中文名 from 企业 where CURRENT_TIMESTAMP - 成立时间 >= 8 and 注册资本 < 1000000
+
+index: 905
+db_id: 企业融资
+medium pred: select 中文名 from 企业 where TIME_NOW - 成立时间 == 17 or 注册资本 >= 1000000
+medium gold: select 中文名 from 企业 where CURRENT_TIMESTAMP - 成立时间 = 17 or 注册资本 >= 1000000
+
+index: 906
+db_id: 企业融资
+medium pred: select 中文名 from 企业 where TIME_NOW - 成立时间 < 13 or 注册资本 < 1000000
+medium gold: select 中文名 from 企业 where CURRENT_TIMESTAMP - 成立时间 < 13 or 注册资本 < 1000000
+
+index: 907
+db_id: 企业融资
+medium pred: select 中文名 from 企业 where TIME_NOW - 成立时间 > 10 and 注册资本 < 1000000
+medium gold: select 中文名 from 企业 where CURRENT_TIMESTAMP - 成立时间 > 10 and 注册资本 < 1000000
+
+index: 908
+db_id: 企业融资
+medium pred: select 中文名 from 企业 where TIME_NOW - 成立时间 > 18 and 注册资本 <= 1000000
+medium gold: select 中文名 from 企业 where CURRENT_TIMESTAMP - 成立时间 > 18 and 注册资本 <= 1000000
+
+index: 909
+db_id: 企业融资
+easy pred: select 中文名 from 企业 where TIME_NOW - 成立时间 > 16
+easy gold: select 中文名 from 企业 where CURRENT_TIMESTAMP - 成立时间 > 16
+
+index: 916
+db_id: 洗衣机
+medium pred: select 城市 from 洗衣机品牌门店 group by 城市 having sum ( 售卖量 ) < 50000000
+medium gold: select 城市 from 洗衣机品牌门店 where 门店数量 > 100 group by 城市 having sum ( 售卖量 * 平均售价 ) < 50000000
+
+index: 917
+db_id: 洗衣机
+medium pred: select 城市 from 洗衣机品牌门店 group by 城市 having count ( * ) <= 100 and sum ( 售卖量 * 平均售价 ) < 1000000
+medium gold: select 城市 from 洗衣机品牌门店 where 门店数量 <= 100 group by 城市 having avg ( 售卖量 * 平均售价 ) < 1000000
+
+index: 923
+db_id: 坚果
+hard pred: select 国家 from 坚果摄入量 group by 国家 order by avg ( 人均摄入量 / 世界人均摄入量 ) desc limit 3
+hard gold: select 国家 from 坚果摄入量 group by 国家 order by avg ( 人均摄入量 - 世界人均摄入量 ) desc limit 3
+
+index: 924
+db_id: 洗衣机
+hard pred: select 城市 from 洗衣机品牌门店 group by 城市 order by sum ( 售卖量 ) asc limit 5
+hard gold: select 城市 from 洗衣机品牌门店 group by 城市 order by avg ( 售卖量 * 平均售价 ) asc limit 5
+
+index: 936
+db_id: 枪击事件
+easy pred: select 人口数量 * 民用枪支数 from 国家
+easy gold: select 民用枪支数 + 军用枪支数 from 国家
+
+index: 937
+db_id: 打车软件
+easy pred: select 所属公司 , avg ( 服务用户数量 ) from 打车APP where 覆盖城市数 <= 30000000 group by 所属公司
+easy gold: select 服务用户数量 / 覆盖城市数 from 打车APP
+
+index: 938
+db_id: 中国卫视频道
+medium pred: select 名称 , 开播时间 from 电视台 order by 开播时间 asc
+medium gold: select 上线时间 - 开播时间 , 开播时间 from 电视台
+
+index: 939
+db_id: 中国卫视频道
+medium pred: select 名称 , 开播时间 , 隶属机构 from 电视台
+medium gold: select 上线时间 - 开播时间 , 隶属机构 from 电视台
+
+index: 944
+db_id: 城市财政收入
+medium pred: select 财政预算收入(亿) - 预算支出额度(亿) , 财政预算收入(亿) from 各省财政收入
+medium gold: select `财政预算收入(亿)` - `预算支出额度(亿)` , `GDP总计(亿)` from 各省财政收入
+
+index: 947
+db_id: 打车软件
+medium pred: select 所属公司 , avg ( 服务用户数量 ) from 打车APP group by 所属公司
+medium gold: select 服务用户数量 / 覆盖城市数 , 所属公司 from 打车APP
+
+index: 948
+db_id: 打车软件
+medium pred: select 所属公司 , avg ( 服务用户数量 ) , 上线时间 from 打车APP group by 所属公司 , 上线时间
+medium gold: select 服务用户数量 / 覆盖城市数 , 上线时间 from 打车APP
+
+index: 949
+db_id: 打车软件
+medium pred: select 覆盖城市数 / 服务用户数量 , ��over_city_id from 打车APP
+medium gold: select 服务用户数量 / 覆盖城市数 , 覆盖城市数 from 打车APP
+
+index: 950
+db_id: 枪击事件
+medium pred: select 人口数量 + 军用枪支数 , 人口数量 from 国家
+medium gold: select 民用枪支数 + 军用枪支数 , 人口数量 from 国家
+
+index: 958
+db_id: 城市财政收入
+easy pred: select min ( 预算支出额度(亿) - 财政预算收入(亿) ) from 各省财政收入
+easy gold: select min ( `财政预算收入(亿)` - `预算支出额度(亿)` ) from 各省财政收入
+
+index: 959
+db_id: 城市财政收入
+easy pred: select max ( 预算赤字率 ) from 各省财政收入
+easy gold: select max ( `财政预算收入(亿)` - `预算支出额度(亿)` ) from 各省财政收入
+
+index: 960
+db_id: 城市财政收入
+easy pred: select sum ( 预算支出额度(亿) - 财政预算收入(亿) ) from 各省财政收入
+easy gold: select sum ( `财政预算收入(亿)` - `预算支出额度(亿)` ) from 各省财政收入
+
+index: 967
+db_id: 枪击事件
+easy pred: select avg ( 人口数量 * 民用枪支数 ) from 国家
+easy gold: select avg ( 民用枪支数 + 军用枪支数 ) from 国家
+
+index: 976
+db_id: 打车软件
+medium pred: select 所属公司 , avg ( 服务用户数量 ) , sum ( 覆盖城市数 ) from 打车APP group by 所属公司
+medium gold: select min ( 服务用户数量 / 覆盖城市数 ) , sum ( 覆盖城市数 ) from 打车APP
+
+index: 977
+db_id: 打车软件
+medium pred: select 所属公司 , sum ( 覆盖城市数 ) , avg ( 服务用户数量 ) from 打车APP group by 所属公司
+medium gold: select avg ( 服务用户数量 / 覆盖城市数 ) , sum ( 覆盖城市数 ) from 打车APP
+
+index: 978
+db_id: 打车软件
+medium pred: select avg ( 服务用户数量 ) , min ( 覆盖城市数 ) from 打车APP
+medium gold: select avg ( 服务用户数量 / 覆盖城市数 ) , min ( 覆盖城市数 ) from 打车APP
+
+index: 980
+db_id: 洗衣机
+medium pred: select max ( 市场份额 ) , min ( `2018年利润` ) from 洗衣机品牌
+medium gold: select min ( `2018年营业额` - `2018年利润` ) , max ( 市场份额 ) from 洗衣机品牌
+
+index: 981
+db_id: 城市财政收入
+medium pred: select sum ( GDP总计(亿) ) , avg ( 财政预算赤字率 ) from 各省财政收入
+medium gold: select sum ( `财政预算收入(亿)` - `预算支出额度(亿)` ) , avg ( `GDP总计(亿)` ) from 各省财政收入
+
+index: 982
+db_id: 城市财政收入
+medium pred: select avg ( GDP总计(亿) ) , avg ( 预算支出额度(亿) - 财政预算收入(亿) ) from 各省财政收入
+medium gold: select avg ( `财政预算收入(亿)` - `预算支出额度(亿)` ) , avg ( `GDP总计(亿)` ) from 各省财政收入
+
+index: 983
+db_id: 城市财政收入
+medium pred: select sum ( GDP总计(亿) ) , sum ( 预算支出额度(亿) * 预算赤字率 ) from 各省财政收入
+medium gold: select sum ( `财政预算收入(亿)` - `预算支出额度(亿)` ) , sum ( `GDP总计(亿)` ) from 各省财政收入
+
+index: 984
+db_id: 坚果
+medium pred: select min ( 饱和脂肪含量 ) , avg ( 饱和脂肪含量 ) from 坚果
+medium gold: select min ( 饱和脂肪含量 + 不饱和脂肪含量 ) , avg ( 饱和脂肪含量 ) from 坚果
+
+index: 985
+db_id: 坚果
+medium pred: select avg ( 饱和脂肪含量 ) , avg ( 不饱和脂肪含量 ) from 坚果
+medium gold: select avg ( 饱和脂肪含量 + 不饱和脂肪含量 ) , avg ( 饱和脂肪含量 ) from 坚果
+
+index: 986
+db_id: 坚果
+medium pred: select min ( 饱和脂肪含量 + 不饱和脂肪含量 ) , min ( 不饱和脂肪含量 ) from 坚果
+medium gold: select min ( 饱和脂肪含量 + 不饱和脂肪含量 ) , min ( 饱和脂肪含量 ) from 坚果
+
+index: 988
+db_id: 中国卫视频道
+easy pred: select 名称 from 电视台 order by 上线时间 desc
+easy gold: select 名称 from 电视台 order by 上线时间 - 开播时间 asc
+
+index: 989
+db_id: 洗衣机
+easy pred: select 名称 from 洗衣机品牌 order by `2018年营业额` asc
+easy gold: select 名称 from 洗衣机品牌 order by `2018年营业额` - `2018年利润` asc
+
+index: 993
+db_id: 城市财政收入
+easy pred: select 省份 from 各省财政收入 order by 预算赤字率 desc
+easy gold: select 省份 from 各省财政收入 order by `财政预算收入(亿)` - `预算支出额度(亿)` desc
+
+index: 994
+db_id: 城市财政收入
+easy pred: select 省份 from 各省财政收入 order by 预算赤字率 asc
+easy gold: select 省份 from 各省财政收入 order by `财政预算收入(亿)` - `预算支出额度(亿)` asc
+
+index: 997
+db_id: 打车软件
+easy pred: select 应用名称 from 打车APP order by 服务用户数量 / 覆盖城市数 asc
+easy gold: select app名称 from 打车APP order by 服务用户数量 / 覆盖城市数 asc
+
+index: 998
+db_id: 打车软件
+easy pred: select 词条id from 打车APP order by 服务用户数量 / 覆盖城市数 desc
+easy gold: select app名称 from 打车APP order by 服务用户数量 / 覆盖城市数 desc
+
+index: 1001
+db_id: 枪击事件
+easy pred: select 名称 from 国家 order by 人口数量 * 每100人持有的民用枪支数 desc
+easy gold: select 名称 from 国家 order by 民用枪支数 + 军用枪支数 desc
+
+index: 1002
+db_id: 枪击事件
+easy pred: select 名称 from 国家 order by 人口数量 * 民用枪支数 asc
+easy gold: select 名称 from 国家 order by 民用枪支数 + 军用枪支数 asc
+
+index: 1005
+db_id: 洗衣机
+medium pred: select 名称 from 洗衣机品牌 order by `2018年营业额` asc limit 3
+medium gold: select 名称 from 洗衣机品牌 order by `2018年营业额` - `2018年利润` asc limit 3
+
+index: 1006
+db_id: 洗衣机
+medium pred: select 名称 from 洗衣机品牌 order by `2018年营业额` desc limit 3
+medium gold: select 名称 from 洗衣机品牌 order by `2018年营业额` - `2018年利润` desc limit 3
+
+index: 1009
+db_id: 城市财政收入
+medium pred: select 省份 from 各省财政收入 order by 预算赤字率 asc limit 3
+medium gold: select 省份 from 各省财政收入 order by `财政预算收入(亿)` - `预算支出额度(亿)` asc limit 3
+
+index: 1010
+db_id: 城市财政收入
+medium pred: select 省份 from 各省财政收入 order by 预算赤字率 desc limit 3
+medium gold: select 省份 from 各省财政收入 order by `财政预算收入(亿)` - `预算支出额度(亿)` desc limit 3
+
+index: 1017
+db_id: 枪击事件
+medium pred: select 名称 from 国家 order by 人口数量 asc limit 3
+medium gold: select 名称 from 国家 order by 民用枪支数 + 军用枪支数 asc limit 3
+
+index: 1018
+db_id: 枪击事件
+medium pred: select 名称 from 国家 order by 人口数量 desc limit 3
+medium gold: select 名称 from 国家 order by 民用枪支数 + 军用枪支数 desc limit 3
+
+index: 1019
+db_id: 打车软件
+medium pred: select 词条id , 服务用户数量 / 覆盖城市数 from 打车APP where 上线时间 >= 2014
+medium gold: select app名称 , 服务用户数量 / 覆盖城市数 from 打车APP where 上线时间 >= 2014
+
+index: 1022
+db_id: 打车软件
+medium pred: select app名称 , avg ( 服务用户数量 ) from 打车APP where 覆盖城市数 != 400 group by app名称
+medium gold: select app名称 , 服务用户数量 / 覆盖城市数 from 打车APP where 覆盖城市数 != 400
+
+index: 1023
+db_id: 中国卫视频道
+medium pred: select 名称 , 开播时间 - 上线时间 from 电视台 where 开播时间 <= '1997-01-01'
+medium gold: select 名称 , 上线时间 - 开播时间 from 电视台 where 开播时间 <= '1997-01-01'
+
+index: 1024
+db_id: 中国卫视频道
+medium pred: select 名称 , 开播时间 - 上线时间 from 电视台 where 开播时间 >= '1997-01-01'
+medium gold: select 名称 , 上线时间 - 开播时间 from 电视台 where 开播时间 >= '1997-01-01'
+
+index: 1025
+db_id: 中国卫视频道
+medium pred: select 名称 , 开播时间 - 上线时间 from 电视台 where 开播时间 < '1997-01-01'
+medium gold: select 名称 , 上线时间 - 开播时间 from 电视台 where 开播时间 < '1997-01-01'
+
+index: 1026
+db_id: 中国卫视频道
+medium pred: select 名称 , 开播时间 - 上线时间 from 电视台 where 开播时间 > '1997-01-01'
+medium gold: select 名称 , 上线时间 - 开播时间 from 电视台 where 开播时间 > '1997-01-01'
+
+index: 1035
+db_id: 坚果
+medium pred: select 名称 , 饱和脂肪含量 + 不饱和脂肪含量 from 坚果
+medium gold: select 名称 , 饱和脂肪含量 + 不饱和脂肪含量 from 坚果 where 饱和脂肪含量 = 3
+
+index: 1046
+db_id: 中国高校
+medium pred: select 类别 , 本科生数量 + 研究生数量 , 所属城市 from 高校 where 创办时间 <= 1924
+medium gold: select 名称 , 本科生数量 + 研究生数量 , 类别 from 高校 where 创办时间 <= 1924
+
+index: 1047
+db_id: 中国高校
+medium pred: select 名称 , 本科生数量 + 研究生数量 , 类别 , 所属城市 from 高校 where 创办时间 < 1924
+medium gold: select 名称 , 本科生数量 + 研究生数量 , 类别 from 高校 where 创办时间 < 1924
+
+index: 1049
+db_id: 中国卫视频道
+medium pred: select 名称 , 开播时间 - 上线时间 , 隶属机构 from 电视台 where 开播时间 >= '1997-01-01'
+medium gold: select 名称 , 上线时间 - 开播时间 , 隶属机构 from 电视台 where 开播时间 >= '1997-01-01'
+
+index: 1050
+db_id: 中国卫视频道
+medium pred: select 名称 , 开播时间 - 上线时间 , 隶属机构 from 电视台 where 开播时间 < '1997-01-01'
+medium gold: select 名称 , 上线时间 - 开播时间 , 隶属机构 from 电视台 where 开播时间 < '1997-01-01'
+
+index: 1051
+db_id: 中国卫视频道
+medium pred: select 名称 , 开播时间 - 上线时间 , 隶属机构 from 电视台 where 开播时间 > '1997-01-01'
+medium gold: select 名称 , 上线时间 - 开播时间 , 隶属机构 from 电视台 where 开播时间 > '1997-01-01'
+
+index: 1052
+db_id: 打车软件
+medium pred: select 词条id , 服务用户数量 / 覆盖城市数 , 所属公司 from 打车APP where 覆盖城市数 == 40
+medium gold: select app名称 , 服务用户数量 / 覆盖城市数 , 所属公司 from 打车APP where 覆盖城市数 = 400
+
+index: 1053
+db_id: 打车软件
+medium pred: select app名称 , 所属公司 , avg ( 服务用户数量 ) from 打车APP where 上线时间 > 2014 group by app名称 , 所属公司
+medium gold: select app名称 , 服务用户数量 / 覆盖城市数 , 所属公司 from 打车APP where 上线时间 > 2014
+
+index: 1055
+db_id: 中国卫视频道
+medium pred: select 名称 , 开播时间 - 上线时间 from 电视台 where 开播时间 - 上线时间 == 1
+medium gold: select 名称 , 上线时间 - 开播时间 from 电视台 where 上线时间 - 开播时间 < 1
+
+index: 1056
+db_id: 中国卫视频道
+medium pred: select 名称 , 开播时间 - 上线时间 from 电视台 where 开播时间 - 上线时间 >= 3
+medium gold: select 名称 , 上线时间 - 开播时间 from 电视台 where 上线时间 - 开播时间 >= 3
+
+index: 1057
+db_id: 中国卫视频道
+medium pred: select 名称 , 开播时间 - 上线时间 from 电视台 where 开播时间 - 上线时间 > 3
+medium gold: select 名称 , 上线时间 - 开播时间 from 电视台 where 上线时间 - 开播时间 > 3
+
+index: 1064
+db_id: 城市财政收入
+medium pred: select 省份 , 预算支出额度(亿) - 预算赤字率 from 各省财政收入 where 预算支出额度(亿) - 预算赤字率 <= 100
+medium gold: select 省份 , `财政预算收入(亿)` - `预算支出额度(亿)` from 各省财政收入 where `财政预算收入(亿)` - `预算支出额度(亿)` <= 100
+
+index: 1065
+db_id: 城市财政收入
+medium pred: select 省份 , 预算支出额度(亿) - 财政预算收入(亿) from 各省财政收入 where 预算支出额度(亿) - 财政预算收入(亿) >= 100
+medium gold: select 省份 , `财政预算收入(亿)` - `预算支出额度(亿)` from 各省财政收入 where `财政预算收入(亿)` - `预算支出额度(亿)` >= 100
+
+index: 1066
+db_id: 城市财政收入
+medium pred: select 省份 , 预算支出额度(亿) - 预算赤字率 from 各省财政收入 where 预算支出额度(亿) - 预算赤字率 < 100
+medium gold: select 省份 , `财政预算收入(亿)` - `预算支出额度(亿)` from 各省财政收入 where `财政预算收入(亿)` - `预算支出额度(亿)` < 100
+
+index: 1070
+db_id: 打车软件
+medium pred: select T2.app名称 , avg ( T1.服务用户数量 ) , T2.所属公司 from 打车APP as T1 join 打车软件开通城市 as T2 on T2.appid == T1.词条id group by T1.词条id having avg ( T1.服务用户数量 ) < 100000
+medium gold: select app名称 , 服务用户数量 / 覆盖城市数 from 打车APP where 服务用户数量 / 覆盖城市数 < 100000
+
+index: 1071
+db_id: 打车软件
+medium pred: select T2.app名称 , T2.服务用户数量 / T1.覆盖城市数 from 各打车APP支持的方式 as T1 join 打车APP as T2 on T1.appid == T2.词条id group by T1.appid having avg ( T1.车数量 * T2.服务用户数量 ) <= 100000
+medium gold: select app名称 , 服务用户数量 / 覆盖城市数 from 打车APP where 服务用户数量 / 覆盖城市数 <= 100000
+
+index: 1076
+db_id: 枪击事件
+medium pred: select 名称 , 人口数量 * 民用枪支数 from 国家 where 人口数量 * 每100人持有的民用枪支数 >= 30000
+medium gold: select 名称 , 民用枪支数 + 军用枪支数 from 国家 where 民用枪支数 + 军用枪支数 >= 30000
+
+index: 1083
+db_id: 中国高校
+medium pred: select 名称 , 本科生数量 - 研究生数量 , 类别 from 高校 where 本科生数量 - 研究生数量 >= 10000
+medium gold: select 名称 , 本科生数量 + 研究生数量 , 类别 from 高校 where 本科生数量 + 研究生数量 >= 10000
+
+index: 1084
+db_id: 中国卫视频道
+medium pred: select 名称 , 开播时间 - 上线时间 , 隶属机构 from 电视台 where 开播时间 - 上线时间 < 1
+medium gold: select 名称 , 上线时间 - 开播时间 , 隶属机构 from 电视台 where 上线时间 - 开播时间 < 1
+
+index: 1085
+db_id: 中国卫视频道
+medium pred: select 名称 , 开播时间 - 上线时间 , 隶属机构 from 电视台 where 开播时间 - 上线时间 > 1
+medium gold: select 名称 , 上线时间 - 开播时间 , 隶属机构 from 电视台 where 上线时间 - 开播时间 > 1
+
+index: 1086
+db_id: 中国卫视频道
+medium pred: select 名称 , 隶属机构 from 电视台 where TIME_NOW - 开播时间 == 1
+medium gold: select 名称 , 隶属机构 from 电视台 where 上线时间 - 开播时间 = 1
+
+index: 1088
+db_id: 打车软件
+medium pred: select app名称 , 服务用户数量 , 所属公司 from 打车APP where 覆盖城市数 <= 30000 group by app名称 , 所属公司 having avg ( 服务用户数量 ) <= 100
+medium gold: select app名称 , 服务用户数量 / 覆盖城市数 , 所属公司 from 打车APP where 服务用户数量 / 覆盖城市数 <= 100
+
+index: 1092
+db_id: 中国卫视频道
+hard pred: select 名称 from 电视台 where 开播时间 - 上线时间 > ( select avg ( 开播时间 - 上线时间 ) from 电视台 )
+hard gold: select 名称 from 电视台 where 上线时间 - 开播时间 > ( select avg ( 上线时间 - 开播时间 ) from 电视台 )
+
+index: 1093
+db_id: 中国卫视频道
+hard pred: select 名称 from 电视台 where 开播时间 <= ( select avg ( 开播时间 ) from 电视台 )
+hard gold: select 名称 from 电视台 where 上线时间 - 开播时间 <= ( select avg ( 上线时间 - 开播时间 ) from 电视台 )
+
+index: 1094
+db_id: 中国卫视频道
+hard pred: select 名称 from 电视台 where 开播时间 < ( select avg ( 开播时间 ) from 电视台 )
+hard gold: select 名称 from 电视台 where 上线时间 - 开播时间 < ( select avg ( 上线时间 - 开播时间 ) from 电视台 )
+
+index: 1096
+db_id: 洗衣机
+hard pred: select 名称 from 洗衣机品牌 where `2018年营业额` >= ( select avg ( `2018年营业额` ) from 洗衣机品牌 )
+hard gold: select 名称 from 洗衣机品牌 where `2018年营业额` - `2018年利润` >= ( select avg ( `2018年营业额` - `2018年利润` ) from 洗衣机品牌 )
+
+index: 1098
+db_id: 坚果
+hard pred: select 名称 from 坚果 where 饱和脂肪含量 < ( select avg ( 饱和脂肪含量 ) from 坚果 )
+hard gold: select 名称 from 坚果 where 饱和脂肪含量 + 不饱和脂肪含量 < ( select avg ( 饱和脂肪含量 + 不饱和脂肪含量 ) from 坚果 )
+
+index: 1099
+db_id: 坚果
+hard pred: select 名称 from 坚果 where 饱和脂肪含量 >= ( select avg ( 饱和脂肪含量 ) from 坚果 )
+hard gold: select 名称 from 坚果 where 饱和脂肪含量 + 不饱和脂肪含量 >= ( select avg ( 饱和脂肪含量 + 不饱和脂肪含量 ) from 坚果 )
+
+index: 1101
+db_id: 城市财政收入
+hard pred: select 省份 from 各省财政收入 where 预算赤字率 > ( select avg ( 预算赤字率 ) from 各省财政收入 )
+hard gold: select 省份 from 各省财政收入 where `财政预算收入(亿)` - `预算支出额度(亿)` > ( select avg ( `财政预算收入(亿)` - `预算支出额度(亿)` ) from 各省财政收入 )
+
+index: 1102
+db_id: 城市财政收入
+hard pred: select 省份 from 各省财政收入 where 预算赤字率 <= ( select avg ( 预算赤字率 ) from 各省财政收入 )
+hard gold: select 省份 from 各省财政收入 where `财政预算收入(亿)` - `预算支出额度(亿)` <= ( select avg ( `财政预算收入(亿)` - `预算支出额度(亿)` ) from 各省财政收入 )
+
+index: 1107
+db_id: 打车软件
+hard pred: select 词条id from 打车APP where 服务用户数量 / 覆盖城市数 < ( select avg ( 服务用户数量 / 覆盖城市数 ) from 打车APP )
+hard gold: select app名称 from 打车APP where 服务用户数量 / 覆盖城市数 < ( select avg ( 服务用户数量 / 覆盖城市数 ) from 打车APP )
+
+index: 1108
+db_id: 打车软件
+hard pred: select 词条id from 打车APP where 服务用户数量 / 覆盖城市数 <= ( select avg ( 服务用户数量 / 覆盖城市数 ) from 打车APP )
+hard gold: select app名称 from 打车APP where 服务用户数量 / 覆盖城市数 <= ( select avg ( 服务用户数量 / 覆盖城市数 ) from 打车APP )
+
+index: 1118
+db_id: 洗衣机
+hard pred: select 名称 from 洗衣机品牌 where `2018年营业额` == ( select max ( `2018年营业额` ) from 洗衣机品牌 where 所属公司 == '西门子' )
+hard gold: select 名称 from 洗衣机品牌 where `2018年营业额` - `2018年利润` = ( select max ( `2018年营业额` - `2018年利润` ) from 洗衣机品牌 where 所属公司 = '西门子集团' )
+
+index: 1136
+db_id: 洗衣机
+easy pred: select avg ( 售卖量 ) from 洗衣机品牌门店
+easy gold: select avg ( 售价 ) from 洗衣机型号
+
+index: 1140
+db_id: CCTV中国经济年度人物
+easy pred: select max ( 年营业额 - 入门耗资 ) from 公司
+easy gold: select max ( 年营业额 ) from 公司
+
+index: 1146
+db_id: 欧洲杯球队
+easy pred: select 主场馆 , avg ( 容纳人数 ) from 球队 group by 主场馆
+easy gold: select avg ( 容纳人数 ) from 球队
+
+index: 1153
+db_id: 购书平台
+medium pred: select sum ( 年营业额 ) , sum ( 会员费 ) from 平台
+medium gold: select avg ( 年营业额 ) , sum ( 会员费 ) from 平台
+
+index: 1154
+db_id: 城市财政收入
+medium pred: select min ( GDP总计(亿) ) , min ( GDP同比增速 ) from 各省财政收入
+medium gold: select min ( `GDP总计(亿)` ) , min ( GDP同比增速 ) from 各省财政收入
+
+index: 1164
+db_id: 坚果
+medium pred: select max ( 饱和脂肪含量 ) , sum ( 每100克热量.含量 ) , avg ( 不饱和脂肪含量 ) from 坚果
+medium gold: select max ( 饱和脂肪含量 ) , sum ( 每100克热量 ) , avg ( 不饱和脂肪含量 ) from 坚果
+
+index: 1165
+db_id: 城市财政收入
+medium pred: select min ( GDP总计(亿) ) , min ( 固定资产投资同比增速 ) , max ( 收入透明度 ) from 各省财政收入
+medium gold: select min ( `GDP总计(亿)` ) , min ( 固定资产投资同比增速 ) , max ( 收入透明度 ) from 各省财政收入
+
+index: 1166
+db_id: 城市财政收入
+medium pred: select avg ( GDP总计(亿) ) , max ( GDP同比增速 ) , min ( 收入透明度 ) from 各省财政收入
+medium gold: select avg ( `GDP总计(亿)` ) , max ( 财政预算同比增速 ) , max ( 收入透明度 ) from 各省财政收入
+
+index: 1169
+db_id: 友好城市
+medium pred: select min ( 建交城市数量 / 建交国家数量 ) , min ( 跨国公司数量 ) , max ( 国外驻华大使馆数量 ) from 城市
+medium gold: select avg ( 建交国家数量 ) , min ( 跨国公司数量 ) , max ( 国外驻华大使馆数量 ) from 城市
+
+index: 1192
+db_id: 友好城市
+medium pred: select T2.所属省 , T1.帮助城市id from 对口帮扶城市 as T1 join 城市 as T2 on T1.贫困城市id == T2.词条id
+medium gold: select 所属省 , 帮助城市id from 对口帮扶城市
+
+index: 1225
+db_id: 打车软件
+medium pred: select 词条id , 上线时间 , 所属公司 from 打车APP where 覆盖城市数 == 100
+medium gold: select app名称 , 所属公司 from 打车APP where 覆盖城市数 = 100
+
+index: 1226
+db_id: 打车软件
+medium pred: select 名称 , 所属公司 from 打车APP where 覆盖城市数 <= 100
+medium gold: select app名称 , 所属公司 from 打车APP where 覆盖城市数 <= 100
+
+index: 1229
+db_id: 洗衣机
+medium pred: select T2.名称 , T1.产品类别 from 洗衣机型号 as T1 join 洗衣机品牌 as T2 on T1.品牌id == T2.词条id where T1.售价 > 3000
+medium gold: select 名称 , 产品类别 from 洗衣机型号 where 售价 > 3000
+
+index: 1230
+db_id: 购书平台
+medium pred: select 书名 , 作者 from 图书 where 书名 != '路遥'
+medium gold: select 书名 , 作者 from 图书 where 作者 != '路遥'
+
+index: 1232
+db_id: 综艺节目
+medium pred: select 姓名 , 民族 from 明星 where 职业 != '演员'
+medium gold: select 姓名 , 民族 from 明星 where 民族 != '演员'
+
+index: 1233
+db_id: 综艺节目
+medium pred: select T2.民族 , T2.姓名 from 综艺节目嘉宾 as T1 join 明星 as T2 on T1.明星id == T2.词条id
+medium gold: select 姓名 , 民族 from 明星 where 民族 = '演员'
+
+index: 1236
+db_id: CCTV中国经济年度人物
+medium pred: select 性别 , 出生地 from 企业人物 where 年龄 >= 35
+medium gold: select 姓名 , 性别 , 出生地 from 企业人物 where 年龄 >= 35
+
+index: 1237
+db_id: 中国卫视频道
+medium pred: select 名称 , 发行公司 from 电视剧 where 出品时间 < 2013
+medium gold: select 名称 , 出品公司 , 发行公司 from 电视剧 where 出品时间 < 2013
+
+index: 1245
+db_id: 中国卫视频道
+medium pred: select 名称 , 发行公司 from 电视剧 where 出品时间 >= 2013
+medium gold: select 名称 , 发行公司 from 电视剧 where 出品时间 >= 2013 and 出品公司 = '北京爱奇艺科技有限公司'
+
+index: 1246
+db_id: 中国卫视频道
+medium pred: select 名称 , 出品公司 from 电视剧 where 出品公司 != '爱奇艺' and 出品时间 >= 12:00:00
+medium gold: select 名称 , 出品公司 from 电视剧 where 出品公司 != '北京爱奇艺科技有限公司' and 发行公司 = '东阳正午阳光影视有限公司'
+
+index: 1255
+db_id: 友好城市
+medium pred: select T2.所属省份 , T2.城市 from 城市 as T1 join 城市 as T2 on T2.词条id == T2.词条id where T1.留学生数量 > 7000 and T1.建交国家数量 >= 72
+medium gold: select 城市 , 所属省份 from 城市 where 建交国家数量 >= 72 and 留学生数量 > 7000
+
+index: 1269
+db_id: 综艺节目
+extra pred: select 节目名称 , 系列名 from 综艺节目 where 首播时间 > '2014-10-01' or 播出时间 < 23:00:00
+extra gold: select 节目名称 , 系列名 from 综艺节目 where 首播时间 > '2014-10-01' or 播出时间 < '22:00'
+
+index: 1279
+db_id: 中国高校
+medium pred: select 名称 , 职业 from 名人 where 主要成就 != '哥德巴赫猜想' order by 职业 asc
+medium gold: select 名称 , 主要成就 from 名人 where 主要成就 != '“1+2”是哥德巴赫猜想研究的丰碑' order by 职业 asc
+
+index: 1282
+db_id: 企业融资
+medium pred: select 中文名 , 法定代表人 from 企业 where 成立时间 > 2015 order by 注册资本 desc
+medium gold: select 中文名 , 法定代表人 from 企业 where 成立时间 < 2015 order by 注册资本 desc
+
+index: 1292
+db_id: 中国卫视频道
+medium pred: select 名称 , 出品公司 from 电视剧 where 出品时间 > 1992 order by 出品时间 desc
+medium gold: select 名称 , 出品公司 from 电视剧 where 出品公司 != '腾讯影业' order by 出品时间 asc
+
+index: 1293
+db_id: 洗衣机
+medium pred: select 名称 , 所属公司 from 洗衣机品牌 where 成立时间 >= 1935 order by 市场份额 asc
+medium gold: select 名称 , 所属公司 from 洗衣机品牌 where 成立时间 <= 1935 order by 市场份额 asc
+
+index: 1294
+db_id: 洗衣机
+medium pred: select 名称 , 所属公司 from 洗衣机品牌 where 成立时间 > 1935 order by 市场份额 asc
+medium gold: select 名称 , 所属公司 from 洗衣机品牌 where 成立时间 < 1935 order by 市场份额 asc
+
+index: 1310
+db_id: 欧洲杯球队
+hard pred: select 中文队名 , 所属地区 from 球队 where 成立时间 >= 1960 order by 容纳人数 asc limit 10
+hard gold: select 中文队名 , 所属地区 from 球队 where 成立时间 >= 1960 order by 容纳人数 desc limit 10
+
+index: 1313
+db_id: 洗衣机
+hard pred: select 名称 , 所属公司 from 洗衣机品牌 where 市场份额 != 0.02 order by `2018年利润` desc limit 10
+hard gold: select 名称 , 所属公司 from 洗衣机品牌 where 市场份额 != 0.02 order by `2018年营业额` desc limit 10
+
+index: 1316
+db_id: 教材辅助参考书
+hard pred: select 名称 , 类型 from 参考书 where 适用阶段 != 1-3 order by 价格 desc limit 10
+hard gold: select 名称 , 类型 from 参考书 where 适用年级 != '1-3' order by 价格 desc limit 10
+
+index: 1326
+db_id: 企业融资
+extra pred: select 中文名 , 法定代表人 from 企业 where 法定代表人 != '刘墨' or 注册资本 != 1000000
+extra gold: select 中文名 , 法定代表人 from 企业 where 法定代表人 != '刘墨' or 注册资本 != 1000000 order by 成立时间 asc limit 3
+
+index: 1328
+db_id: 枪击事件
+extra pred: select T2.姓名 , T2.性别 from 韩国自杀的娱乐明星 as T1 join 国家 as T2 on T1.国家id == T2.词条id where T1.性别 != '女' or T1.死亡时间 <= '2019-11-30' group by T1.国家id order by T1.年龄 asc limit 3
+extra gold: select 姓名 , 性别 from 韩国自杀的娱乐明星 where 性别 != '女' or 死亡时间 <= '2019-11-30' order by 年龄 asc limit 3
+
+index: 1331
+db_id: 教材辅助参考书
+extra pred: select 名称 , 类型 from 参考书 where 类型 != '出版书' or 适用年级 != 1-3 order by 价格 desc limit 3
+extra gold: select 名称 , 类型 from 参考书 where 类型 != '出版书' or 适用年级 != '1-3' order by 价格 desc limit 3
+
+index: 1333
+db_id: 欧洲杯球队
+extra pred: select 中文队名 , 所属地区 from 球队 where 所属地区 != '巴西' or 成立时间 <= 1964 group by 中文队名 order by count ( * ) desc limit 3
+extra gold: select 中文队名 , 所属地区 from 球队 where 所属地区 != '巴西' or 成立时间 <= 1964 order by 容纳人数 desc limit 3
+
+index: 1337
+db_id: 综艺节目
+extra pred: select 节目名称 , 播出频道 , 系列名 from 综艺节目 where 首播时间 < '2014-10-01' or 系列名 != '欢乐喜剧人' order by 首播时间 asc limit 3
+extra gold: select 节目名称 , 播出频道 from 综艺节目 where 首播时间 < '2014-10-01' or 系列名 != '欢乐喜剧人' order by 播出时间 asc limit 3
+
+index: 1339
+db_id: 奥运会参赛队伍
+extra pred: select 名称 , 举办城市 from 夏季奥运会 where 举办国家id not in ( select 举办国家id from 夏季奥运会 where 名称 == '雅典奥运会' ) or 参赛国家数量 < 30 order by 小项项目数 desc limit 10
+extra gold: select 名称 , 举办城市 from 夏季奥运会 where 举办城市 != '雅典' or 参赛国家数量 < 30 order by 小项项目数 desc limit 10
+
+index: 1341
+db_id: 打车软件
+extra pred: select 应用名称 , 所属公司 from 打车APP where 上线时间 > 2014 or 覆盖城市数 < 100 order by 服务用户数量 desc limit 3
+extra gold: select app名称 , 所属公司 from 打车APP where 上线时间 > 2014 or 覆盖城市数 < 100 order by 服务用户数量 desc limit 3
+
+index: 1356
+db_id: 教材辅助参考书
+hard pred: select 名称 , 类型 from 参考书 where 类型 != '出版书' and 适用年级 != 1-3 order by 价格 desc limit 10
+hard gold: select 名称 , 类型 from 参考书 where 类型 != '出版书' and 适用年级 != '1-3' order by 价格 desc limit 10
+
+index: 1382
+db_id: 企业融资
+extra pred: select 融资轮次 from 企业融资 where 年份 >= 2010 group by 融资轮次 order by sum ( 融资额 ) desc limit 1
+extra gold: select 融资轮次 from 企业融资 where 年份 >= 2010 group by 融资轮次 order by sum ( 融资总额 ) desc limit 1
+
+index: 1391
+db_id: 洗衣机
+extra pred: select 所属公司 from 洗衣机品牌 where 成立时间 > 1955 group by 所属公司 order by avg ( 市场份额 ) asc limit 5
+extra gold: select 所属公司 from 洗衣机品牌 where 成立时间 > 1955 group by 所属公司 order by avg ( 市场份额 ) desc limit 5
+
+index: 1438
+db_id: 洗衣机
+extra pred: select 城市 , sum ( 售卖量 ) from 洗衣机品牌门店 where 门店数量 >= 500 group by 城市 order by count ( * ) desc limit 3
+extra gold: select 城市 , sum ( 平均售价 ) from 洗衣机品牌门店 where 门店数量 >= 500 group by 城市 order by count ( * ) desc limit 3
+
+index: 1441
+db_id: 友好城市
+extra pred: select 所属省份 , avg ( 国外驻华大使馆数量 ) from 城市 where 建交国家数量 != 10 group by 所属省 order by count ( * ) desc limit 1
+extra gold: select 所属省份 , avg ( 国外驻华大使馆数量 ) from 城市 where 建交国家数量 != 10 group by 所属省份 order by count ( * ) desc limit 1
+
+index: 1446
+db_id: 欧洲杯球队
+medium pred: select 所属地区 , max ( 容纳人数 ) from 球队 where 成立时间 < 1964 group by 所属地区
+medium gold: select max ( 容纳人数 ) , 所属地区 from 球队 where 成立时间 <= 1964 group by 所属地区
+
+index: 1476
+db_id: 洗衣机
+extra pred: select 所属公司 , avg ( `2018年营业额` ) from 洗衣机品牌 where 成立时间 >= 1955 and 市场份额 > 0.02 group by 所属公司
+extra gold: select 所属公司 , avg ( `2018年利润` ) from 洗衣机品牌 where 成立时间 >= 1955 and 市场份额 > 0.02 group by 所属公司
+
+index: 1479
+db_id: 友好城市
+extra pred: select 所属省份 , sum ( 跨国公司数量 ) from 城市 where 建交国家数量 < 10 and 国外驻华大使馆数量 >= 137 group by 所属省
+extra gold: select 所属省份 , sum ( 跨国公司数量 ) from 城市 where 建交国家数量 < 10 and 国外驻华大使馆数量 >= 137 group by 所属省份
+
+index: 1480
+db_id: 友好城市
+extra pred: select 所属省份 , min ( 跨国公司数量 ) from 城市 where 建交国家数量 <= 10 and 留学生数量 < 25000 group by 所属省
+extra gold: select 所属省份 , min ( 跨国公司数量 ) from 城市 where 建交国家数量 <= 10 and 留学生数量 < 25000 group by 所属省份
+
+index: 1483
+db_id: 友好城市
+extra pred: select 所属省份 , sum ( 跨国公司数量 ) from 城市 where 建交国家数量 > 10 and 国外驻华大使馆数量 == 137 group by 所属省
+extra gold: select 所属省份 , sum ( 跨国公司数量 ) from 城市 where 建交国家数量 > 10 and 国外驻华大使馆数量 = 137 group by 所属省份
+
+index: 1490
+db_id: 奥运会参赛队伍
+extra pred: select avg ( 参赛运动员数量 / 大项项目数 ) , avg ( 小项项目数 ) , 举办城市 from 夏季奥运会 where 参赛国家数量 <= 30 group by 举办城市
+extra gold: select avg ( 参赛运动员数量 ) , sum ( 小项项目数 ) , 举办城市 from 夏季奥运会 where 参赛国家数量 <= 30 group by 举办城市
+
+index: 1491
+db_id: 奥运会参赛队伍
+extra pred: select max ( 小项项目数 ) , sum ( 大项项目数 ) , 举办城市 from 夏季奥运会 group by 举办城市 having count ( * ) >= 30
+extra gold: select max ( 小项项目数 ) , sum ( 大项项目数 ) , 举办城市 from 夏季奥运会 where 参赛国家数量 >= 30 group by 举办城市
+
+index: 1492
+db_id: 奥运会参赛队伍
+extra pred: select sum ( 大项项目数 ) , avg ( 参赛运动员数量 ) , 举办城市 from 夏季奥运会 where 参赛国家数量 >= 30 group by 举办城市
+extra gold: select sum ( 小项项目数 ) , avg ( 参赛运动员数量 ) , 举办城市 from 夏季奥运会 where 参赛国家数量 >= 30 group by 举办城市
+
+index: 1502
+db_id: 友好城市
+extra pred: select max ( 建交城市数量 ) , avg ( 建交城市数量 ) , 所属省份 from 城市 where 建交国家数量 <= 10 group by 所属省份
+extra gold: select avg ( 建交城市数量 ) , max ( 留学生数量 ) , 所属省份 from 城市 where 建交国家数量 <= 10 group by 所属省份
+
+index: 1510
+db_id: 打车软件
+extra pred: select avg ( 服务用户数量 ) , 所属公司 from 打车APP where 上线时间 < 2014 or 覆盖城市数 <= 100 group by 所属公司
+extra gold: select 所属公司 , avg ( 服务用户数量 ) from 打车APP where 上线时间 < 2014 and 覆盖城市数 <= 100 group by 所属公司
+
+index: 1515
+db_id: 奥运会参赛队伍
+hard pred: select avg ( 大项项目数 + 小项项目数 ) , 名称 from 夏季奥运会 where 吉祥物 != '欢欢' or 参赛国家数量 > 30 group by 名称
+hard gold: select 举办城市 , avg ( 小项项目数 ) from 夏季奥运会 where 吉祥物 != '欢欢' or 参赛国家数量 > 30 group by 举办城市
+
+index: 1517
+db_id: 奥运会参赛队伍
+hard pred: select min ( 参赛运动员数量 ) , 举办国家id from 夏季奥运会 where 参赛国家数量 == 30 or 大项项目数 > 16 group by 举办国家id
+hard gold: select 举办城市 , min ( 参赛运动员数量 ) from 夏季奥运会 where 参赛国家数量 = 30 or 大项项目数 > 16 group by 举办城市
+
+index: 1524
+db_id: 友好城市
+hard pred: select 所属省份 , avg ( 跨国公司数量 ) from 城市 where 建交国家数量 == 10 or 建交城市数量 <= 13 group by 所属省
+hard gold: select 所属省份 , avg ( 跨国公司数量 ) from 城市 where 建交国家数量 = 10 or 建交城市数量 <= 13 group by 所属省份
+
+index: 1526
+db_id: 友好城市
+hard pred: select 所属省份 , sum ( 国外驻华大使馆数量 ) from 城市 where 建交国家数量 <= 10 or 留学生数量 == 25000 group by 所属省
+hard gold: select 所属省份 , sum ( 国外驻华大使馆数量 ) from 城市 where 建交国家数量 <= 10 or 留学生数量 = 25000 group by 所属省份
+
+index: 1528
+db_id: 友好城市
+hard pred: select 所属省份 , avg ( 跨国公司数量 ) from 城市 where 建交国家数量 > 10 or 建交城市数量 <= 13 group by 所属省
+hard gold: select 所属省份 , avg ( 跨国公司数量 ) from 城市 where 建交国家数量 > 10 or 建交城市数量 <= 13 group by 所属省份
+
+index: 1541
+db_id: 教材辅助参考书
+medium pred: select 类型 from 参考书 where 适用年级 != 1-3 group by 类型 having sum ( 价格 ) > 100
+medium gold: select 类型 from 参考书 where 适用年级 != '1-3' group by 类型 having sum ( 价格 ) > 100
+
+index: 1550
+db_id: 洗衣机
+medium pred: select 产品类别 from 洗衣机型号 where 售价 != 10000 and 售价 >= 5
+medium gold: select 产品类别 from 洗衣机型号 where 售价 != 10000 group by 产品类别 having count ( * ) >= 5
+
+index: 1551
+db_id: 运动员比赛记录
+medium pred: select 中文名 from 篮球运动员 where 场上位置 != '三屏海岸' and 年龄 != 30 group by 场上位置 having count ( * ) <= 5
+medium gold: select 场上位置 from 篮球运动员 where 年龄 != 30 group by 场上位置 having count ( * ) <= 5
+
+index: 1565
+db_id: 综艺节目
+medium pred: select 系列名 from 综艺节目 where 首播时间 <= '2018-12-20' 12:00:00 group by 系列名 having count ( * ) <= 5
+medium gold: select 系列名 from 综艺节目 where 首播时间 <= '2018-12-20' and 播出时间 < '12:00' group by 系列名 having count ( * ) <= 5
+
+index: 1566
+db_id: 综艺节目
+medium pred: select 系列名 from 综艺节目 where 首播时间 < '2018-12-20' and 播出时间 > 12:00:00 group by 系列名 having count ( * ) == 5
+medium gold: select 系列名 from 综艺节目 where 首播时间 < '2018-12-20' and 播出时间 > '12:00' group by 系列名 having count ( * ) = 5
+
+index: 1567
+db_id: 综艺节目
+medium pred: select 系列名 from 综艺节目 where 首播时间 >= '2018-12-20' and 播出时间 < 12:00:00 group by 系列名 having count ( * ) > 5
+medium gold: select 系列名 from 综艺节目 where 首播时间 >= '2018-12-20' and 播出时间 < '12:00' group by 系列名 having count ( * ) > 5
+
+index: 1572
+db_id: 友好城市
+medium pred: select 所属省份 from 城市 where 建交国家数量 == 72 and 国外驻华大使馆数量 > 0 and 跨国公司数量 > 100 group by 所属省份 having count ( * ) == 5
+medium gold: select 所属省份 from 城市 where 建交国家数量 = 72 and 国外驻华大使馆数量 != 0 group by 所属省份 having sum ( 跨国公司数量 ) > 100
+
+index: 1577
+db_id: 坚果
+medium pred: select T2.国家 , min ( T1.世界人均摄入量 ) from 坚果摄入量 as T1 join 坚果 as T2 on T1.坚果id == T2.词条id where T1.人均摄入量 > 0.05 group by T1.坚果id having count ( * ) >= 5
+medium gold: select 国家 , min ( 世界人均摄入量 ) from 坚果摄入量 where 人均摄入量 > 0.05 group by 国家 having count ( * ) >= 5
+
+index: 1596
+db_id: 洗衣机
+medium pred: select 城市 , min ( 售卖量 ) from 洗衣机品牌门店 group by 城市 having count ( * ) != 5
+medium gold: select 城市 , min ( 售卖量 ) from 洗衣机品牌门店 where 门店数量 != 500 group by 城市 having count ( * ) = 5
+
+index: 1599
+db_id: 友好城市
+medium pred: select 所属省份 , avg ( 建交城市数量 ) from 城市 where 建交国家数量 <= 10 group by 所属省 having sum ( 留学生数量 ) <= 500
+medium gold: select 所属省份 , avg ( 建交城市数量 ) from 城市 where 建交国家数量 <= 10 group by 所属省份 having sum ( 留学生数量 ) <= 500
+
+index: 1606
+db_id: 综艺节目
+hard pred: select 系列名 from 综艺节目 where 首播时间 > '2014-10-01' or 播出时间 <= 22:00:00 group by 系列名 having count ( * ) == 5
+hard gold: select 系列名 from 综艺节目 where 首播时间 > '2014-10-01' or 播出时间 <= '22:00' group by 系列名 having count ( * ) = 5
+
+index: 1607
+db_id: 综艺节目
+hard pred: select 系列名 from 综艺节目 where 首播时间 > '2014-10-01' or 播出时间 >= 22:00:00 group by 系列名 having count ( * ) >= 5
+hard gold: select 系列名 from 综艺节目 where 首播时间 > '2014-10-01' or 播出时间 >= '22:00' group by 系列名 having count ( * ) >= 5
+
+index: 1616
+db_id: 友好城市
+hard pred: select 城市 from 城市 where 建交国家数量 != 10 or 建交城市数量 > 13 group by 城市 having count ( * ) <= 5
+hard gold: select 所属省份 from 城市 where 建交国家数量 != 10 or 建交城市数量 > 13 group by 所属省份 having count ( * ) <= 5
+
+index: 1626
+db_id: 教材辅助参考书
+medium pred: select 类型 , max ( 适用阶段 ) from 参考书 group by 类型
+medium gold: select 类型 , max ( 适用年级 ) from 参考书 group by 类型
+
+index: 1628
+db_id: 企业融资
+medium pred: select 融资轮次 , avg ( 融资额 ) from 投资公司 group by 融资轮次
+medium gold: select 融资轮次 , avg ( 融资总额 ) from 企业融资 group by 融资轮次
+
+index: 1632
+db_id: 枪击事件
+medium pred: select min ( 受影响学生数量 ) from 美国近几年校园枪击事件
+medium gold: select 发生城市 , min ( 受影响学生数量 ) from 美国近几年校园枪击事件 group by 发生城市
+
+index: 1664
+db_id: 坚果
+medium pred: select max ( 营业收入 ) , min ( 全年占比 ) from 坚果季节性营业收入
+medium gold: select 季节 , max ( 营业收入 ) , min ( 全年占比 ) from 坚果季节性营业收入 group by 季节
+
+index: 1669
+db_id: 教材辅助参考书
+medium pred: select 类型 , avg ( 适用阶段 ) , min ( 价格 ) from 参考书 group by 类型
+medium gold: select 类型 , sum ( 适用年级 ) , min ( 价格 ) from 参考书 group by 类型
+
+index: 1679
+db_id: 枪击事件
+medium pred: select 发生城市 , min ( 受影响学生数量 ) , avg ( 伤亡人数 ) from 美国近几年校园枪击事件 group by 发生城市
+medium gold: select 发生城市 , min ( 受影响学生数量 ) , sum ( 伤亡人数 ) from 美国近几年校园枪击事件 group by 发生城市
+
+index: 1680
+db_id: 企业融资
+medium pred: select T2.中文名 , max ( T1.融资额 ) , sum ( T1.投资公司持股比例 ) from 投资公司 as T1 join 企业 as T2 on T1.企业id == T2.词条id group by T1.企业id
+medium gold: select 投资公司 , max ( 融资额 ) , sum ( 投资公司持股比例 ) from 投资公司 group by 投资公司
+
+index: 1682
+db_id: 企业融资
+medium pred: select min ( 投资公司持股比例 ) , max ( 融资额 ) from 投资公司
+medium gold: select 投资公司 , max ( 融资额 ) , min ( 投资公司持股比例 ) from 投资公司 group by 投资公司
+
+index: 1692
+db_id: 友好城市
+medium pred: select 所属省份 , sum ( 建交国家数量 ) , avg ( 国外驻华大使馆数量 ) from 城市 group by 所属省
+medium gold: select 所属省份 , sum ( 建交国家数量 ) , avg ( 国外驻华大使馆数量 ) from 城市 group by 所属省份
+
+index: 1724
+db_id: 打车软件
+easy pred: select 城市 from 软件对租车的支持 where 是否支持租车 == '是' group by 城市 having count ( * ) < 5
+easy gold: select 城市 from 软件对租车的支持 group by 城市 having count ( * ) < 5
+
+index: 1744
+db_id: 坚果
+medium pred: select 季节 , avg ( 人均摄入量 ) from 坚果摄入量 group by 季节 having avg ( 营业收入 ) > 2000000
+medium gold: select 季节 , avg ( 全年占比 ) from 坚果季节性营业收入 group by 季节 having avg ( 营业收入 ) > 2000000
+
+index: 1745
+db_id: 坚果
+medium pred: select 季节 , max ( 人均摄入量 ) from 坚果摄入量 group by 季节 having avg ( 世界人均摄入量 ) < 2000000
+medium gold: select 季节 , max ( 全年占比 ) from 坚果季节性营业收入 group by 季节 having avg ( 营业收入 ) < 2000000
+
+index: 1746
+db_id: 企业融资
+medium pred: select T2.中文名 , max ( T1.投资公司持股比例 ) from 投资公司 as T1 join 企业 as T2 on T1.企业id == T2.词条id where T1.融资额 >= 100000000 group by T1.企业id
+medium gold: select 投资公司 , max ( 投资公司持股比例 ) from 投资公司 group by 投资公司 having sum ( 融资额 ) >= 100000000
+
+index: 1755
+db_id: 洗衣机
+medium pred: select T2.名称 , min ( T1.功能得分 ) from 洗衣机品牌平台评分 as T1 join 洗衣机品牌 as T2 on T1.品牌id == T2.词条id group by T1.品牌id having sum ( T1.总评分 ) > 7
+medium gold: select 平台 , min ( 功能得分 ) from 洗衣机品牌平台评分 group by 平台 having sum ( 总评分 ) > 7
+
+index: 1756
+db_id: 友好城市
+medium pred: select 所属省份 , avg ( 国外驻华大使馆数量 ) from 城市 group by 所属省 having sum ( 建交国家数量 ) >= 70
+medium gold: select 所属省份 , avg ( 国外驻华大使馆数量 ) from 城市 group by 所属省份 having sum ( 建交国家数量 ) >= 70
+
+index: 1773
+db_id: 坚果
+easy pred: select 季节 from 坚果季节性营业收入 where avg ( 营业收入 ) <= 20000000 group by 季节 having sum ( 全年占比 ) >= 0.1
+easy gold: select 季节 from 坚果季节性营业收入 group by 季节 having avg ( 营业收入 ) <= 20000000 and sum ( 全年占比 ) >= 0.1
+
+index: 1788
+db_id: 坚果
+hard pred: select 营养成分 from 每100克坚果营养成分 group by 营养成分 order by avg ( 含量 ) asc limit 5
+hard gold: select 营养成分 from 每100克坚果营养成分 group by 营养成分 order by avg ( 含量 ) desc limit 5
+
+index: 1807
+db_id: 洗衣机
+hard pred: select 平台 from 洗衣机品牌门店 group by 平台 order by avg ( 总评分 ) desc limit 1
+hard gold: select 平台 from 洗衣机品牌平台评分 group by 平台 order by avg ( 总评分 ) desc limit 1
+
+index: 1828
+db_id: 教材辅助参考书
+hard pred: select 类型 , avg ( 适用阶段 ) from 参考书 group by 类型 order by count ( * ) asc limit 1
+hard gold: select 类型 , avg ( 适用年级 ) from 参考书 group by 类型 order by count ( * ) asc limit 1
+
+index: 1829
+db_id: 教材辅助参考书
+hard pred: select 类型 , sum ( 适用阶段 ) from 参考书 group by 类型 order by count ( * ) asc limit 1
+hard gold: select 类型 , sum ( 适用年级 ) from 参考书 group by 类型 order by count ( * ) asc limit 1
+
+index: 1845
+db_id: 枪击事件
+hard pred: select min ( 受影响学生数量 ) from 美国近几年校园枪击事件
+hard gold: select 发生城市 , min ( 受影响学生数量 ) from 美国近几年校园枪击事件 group by 发生城市 order by count ( * ) asc limit 10
+
+index: 1847
+db_id: 枪击事件
+hard pred: select 发生城市 , avg ( 受影响学生数量 ) from 美国近几年校园枪击事件 group by 发生城市 having count ( * ) <= 10
+hard gold: select 发生城市 , avg ( 受影响学生数量 ) from 美国近几年校园枪击事件 group by 发生城市 order by count ( * ) desc limit 1
+
+index: 1849
+db_id: 枪击事件
+hard pred: select 发生城市 , avg ( 枪击者年龄 ) from 美国近几年校园枪击事件 group by 发生城市 having avg ( 受影响学生数量 ) > ( select avg ( 受影响学生数量 ) from 美国近几年校园枪击事件 )
+hard gold: select 发生城市 , avg ( 枪击者年龄 ) from 美国近几年校园枪击事件 group by 发生城市 order by avg ( 受影响学生数量 ) asc limit 5
+
+index: 1851
+db_id: 坚果
+hard pred: select min ( 市场占比 ) from 坚果产地 group by 产地 order by count ( * ) asc limit 10
+hard gold: select 产地 , min ( 市场占比 ) from 坚果产地 group by 产地 order by count ( * ) asc limit 10
+
+index: 1853
+db_id: 坚果
+hard pred: select sum ( 市场占比 ) from 坚果产地
+hard gold: select 产地 , sum ( 市场占比 ) from 坚果产地 group by 产地 order by count ( * ) asc limit 10
+
+index: 1859
+db_id: 枪击事件
+easy pred: select 姓名 , 姓名 from 韩国自杀的娱乐明星 order by 性别 asc
+easy gold: select 姓名 from 韩国自杀的娱乐明星 order by 年龄 asc
+
+index: 1860
+db_id: 教材辅助参考书
+easy pred: select 名称 from 参考书 order by 适用阶段 desc
+easy gold: select 名称 from 参考书 order by 适用年级 desc
+
+index: 1876
+db_id: 教材辅助参考书
+medium pred: select 名称 , 类型 , 适用阶段 from 参考书 order by 适用阶段 asc
+medium gold: select 名称 , 类型 from 参考书 order by 适用年级 desc
+
+index: 1898
+db_id: 教材辅助参考书
+medium pred: select 名称 , 类型 , 价格 from 参考书 order by 适用阶段 asc
+medium gold: select 名称 , 类型 , 价格 from 参考书 order by 适用年级 asc
+
+index: 1916
+db_id: 企业融资
+hard pred: select T2.法定代表人 , min ( T1.融资额 ) from 投资公司 as T1 join 企业 as T2 on T1.企业id == T2.词条id where T2.注册资本 >= 10000000 group by T1.企业id
+hard gold: select T2.中文名 , min ( T1.融资额 ) , T2.法定代表人 from 投资公司 as T1 join 企业 as T2 on T1.企业id = T2.词条id where T2.注册资本 >= 1000000 group by T1.企业id
+
+index: 1918
+db_id: 企业融资
+hard pred: select T2.法定代表人 , max ( T1.融资额 ) from 投资公司 as T1 join 企业 as T2 on T1.企业id == T2.词条id where T2.注册资本 > 1000000 group by T1.企业id
+hard gold: select T2.中文名 , max ( T1.融资额 ) , T2.法定代表人 from 投资公司 as T1 join 企业 as T2 on T1.企业id = T2.词条id where T2.注册资本 > 1000000 group by T1.企业id
+
+index: 1920
+db_id: 企业融资
+hard pred: select T2.法定代表人 , sum ( T1.融资额 ) from 投资公司 as T1 join 企业 as T2 on T1.企业id == T2.词条id where T2.注册资本 >= 10000000 group by T1.企业id
+hard gold: select T2.中文名 , sum ( T1.融资额 ) , T2.法定代表人 from 投资公司 as T1 join 企业 as T2 on T1.企业id = T2.词条id where T2.注册资本 >= 1000000 group by T1.企业id
+
+index: 1921
+db_id: 洗衣机
+hard pred: select max ( 售价 ) , 所属公司 from 洗衣机型号 where 市场份额 <= 10.2 group by 所属公司
+hard gold: select T2.名称 , max ( T1.售价 ) , T2.所属公司 from 洗衣机型号 as T1 join 洗衣机品牌 as T2 on T1.品牌id = T2.词条id where T2.市场份额 <= 0.102 group by T1.品牌id
+
+index: 1924
+db_id: 洗衣机
+hard pred: select T2.名称 , max ( T1.售价 ) from 洗衣机型号 as T1 join 洗衣机品牌 as T2 on T1.品牌id == T2.词条id group by T1.品牌id having sum ( T1.市场份额 ) < 0.102
+hard gold: select T2.名称 , max ( T1.售价 ) , T2.所属公司 from 洗衣机型号 as T1 join 洗衣机品牌 as T2 on T1.品牌id = T2.词条id where T2.市场份额 < 0.102 group by T1.品牌id
+
+index: 1925
+db_id: 洗衣机
+hard pred: select T2.名称 , min ( T1.售价 ) from 洗衣机型号 as T1 join 洗衣机品牌 as T2 on T1.品牌id == T2.词条id group by T1.品牌id having sum ( T1.市场份额 ) > 0.1
+hard gold: select T2.名称 , min ( T1.售价 ) , T2.所属公司 from 洗衣机型号 as T1 join 洗衣机品牌 as T2 on T1.品牌id = T2.词条id where T2.市场份额 > 0.102 group by T1.品牌id
+
+index: 1926
+db_id: 洗衣机
+hard pred: select T2.名称 , min ( T1.门店数量 ) from 洗衣机品牌门店 as T1 join 洗衣机品牌 as T2 on T1.品牌id == T2.词条id group by T1.品牌id having sum ( T1.市场份额 ) <= 0.102
+hard gold: select T2.名称 , min ( T1.门店数量 ) , T2.所属公司 from 洗衣机品牌门店 as T1 join 洗衣机品牌 as T2 on T1.品牌id = T2.词条id where T2.市场份额 <= 0.102 group by T1.品牌id
+
+index: 1927
+db_id: 洗衣机
+hard pred: select T2.名称 , max ( T1.门店数量 ) from 洗衣机品牌门店 as T1 join 洗衣机品牌 as T2 on T1.品牌id == T2.词条id group by T1.品牌id having sum ( T1.市场份额 ) >= 0.102
+hard gold: select T2.名称 , max ( T1.门店数量 ) , T2.所属公司 from 洗衣机品牌门店 as T1 join 洗衣机品牌 as T2 on T1.品牌id = T2.词条id where T2.市场份额 >= 0.102 group by T1.品牌id
+
+index: 1928
+db_id: 洗衣机
+hard pred: select T2.名称 , max ( T1.门店数量 ) from 洗衣机品牌门店 as T1 join 洗衣机品牌 as T2 on T1.品牌id == T2.词条id group by T1.品牌id having sum ( T1.市场份额 ) > 0.1
+hard gold: select T2.名称 , max ( T1.门店数量 ) , T2.所属公司 from 洗衣机品牌门店 as T1 join 洗衣机品牌 as T2 on T1.品牌id = T2.词条id where T2.市场份额 > 0.102 group by T1.品牌id
+
+index: 1929
+db_id: 洗衣机
+hard pred: select T2.名称 , min ( T1.门店数量 ) from 洗衣机品牌门店 as T1 join 洗衣机品牌 as T2 on T1.品牌id == T2.词条id group by T1.品牌id having sum ( T1.市场份额 ) < 0.1
+hard gold: select T2.名称 , min ( T1.门店数量 ) , T2.所属公司 from 洗衣机品牌门店 as T1 join 洗衣机品牌 as T2 on T1.品牌id = T2.词条id where T2.市场份额 < 0.102 group by T1.品牌id
+
+index: 1930
+db_id: 洗衣机
+hard pred: select T2.名称 , max ( T1.门店数量 ) from 洗衣机品牌门店 as T1 join 洗衣机品牌 as T2 on T1.品牌id == T2.词条id group by T1.品牌id having sum ( T1.市场份额 ) <= 0.102
+hard gold: select T2.名称 , max ( T1.门店数量 ) , T2.所属公司 from 洗衣机品牌门店 as T1 join 洗衣机品牌 as T2 on T1.品牌id = T2.词条id where T2.市场份额 <= 0.102 group by T1.品牌id
+
+index: 1932
+db_id: 打车软件
+hard pred: select 名称 , avg ( 车数量 ) , 理念 from 各打车APP支持的方式 where 每公里价格 < 120000 group by 名称 , 理念
+hard gold: select T2.名称 , avg ( T1.车数量 ) , T2.理念 from 各打车APP支持的方式 as T1 join 打车方式 as T2 on T1.方式id = T2.词条id where T2.每公里价格 < 12 group by T1.方式id
+
+index: 1934
+db_id: 打车软件
+hard pred: select 名称 , 车数量 from 打车方式 where 每公里价格 > 1200000000000000
+hard gold: select T2.名称 , sum ( T1.车数量 ) , T2.理念 from 各打车APP支持的方式 as T1 join 打车方式 as T2 on T1.方式id = T2.词条id where T2.每公里价格 > 12 group by T1.方式id
+
+index: 1938
+db_id: 洗衣机
+hard pred: select T2.名称 , avg ( T1.总评分 ) from 洗衣机品牌平台评分 as T1 join 洗衣机品牌 as T2 on T1.品牌id == T2.词条id group by T1.品牌id having sum ( T1.市场份额 ) >= 0.102
+hard gold: select T2.名称 , avg ( T1.总评分 ) , T2.所属公司 from 洗衣机品牌平台评分 as T1 join 洗衣机品牌 as T2 on T1.品牌id = T2.词条id where T2.市场份额 >= 0.102 group by T1.品牌id
+
+index: 1939
+db_id: 洗衣机
+hard pred: select T2.名称 , min ( T1.总评分 ) from 洗衣机品牌平台评分 as T1 join 洗衣机品牌 as T2 on T1.品牌id == T2.词条id where T2.市场份额 >= 0.102 group by T1.品牌id
+hard gold: select T2.名称 , min ( T1.总评分 ) , T2.所属公司 from 洗衣机品牌平台评分 as T1 join 洗衣机品牌 as T2 on T1.品牌id = T2.词条id where T2.市场份额 >= 0.102 group by T1.品牌id
+
+index: 1942
+db_id: 运动员比赛记录
+hard pred: select 中文名 , 场上位置 , sum ( 出场次数 ) from 篮球运动员 where 年龄 < 25 group by 中文名 , 场上位置
+hard gold: select T2.中文名 , sum ( T1.出场次数 ) , T2.场上位置 from 比赛记录 as T1 join 篮球运动员 as T2 on T1.球员id = T2.词条id where T2.年龄 < 25 group by T1.球员id
+
+index: 1944
+db_id: 运动员比赛记录
+hard pred: select 中文名 , 场上位置 , avg ( 出场次数 ) from 篮球运动员 where 年龄 >= 25 group by 中文名 , 场上位置
+hard gold: select T2.中文名 , avg ( T1.出场次数 ) , T2.场上位置 from 比赛记录 as T1 join 篮球运动员 as T2 on T1.球员id = T2.词条id where T2.年龄 >= 25 group by T1.球员id
+
+index: 1945
+db_id: 运动员比赛记录
+hard pred: select 中文名 , 场上位置 , max ( 出场次数 ) from 篮球运动员 where 年龄 >= 25 group by 中文名 , 场上位置
+hard gold: select T2.中文名 , max ( T1.出场次数 ) , T2.场上位置 from 比赛记录 as T1 join 篮球运动员 as T2 on T1.球员id = T2.词条id where T2.年龄 > 25 group by T1.球员id
+
+index: 1948
+db_id: 企业融资
+hard pred: select T2.法定代表人 , sum ( T1.融资额 ) from 投资公司 as T1 join 企业 as T2 on T1.企业id == T2.词条id where T2.注册资本 > 1000000 group by T1.企业id
+hard gold: select T2.中文名 , sum ( T1.融资总额 ) , T2.法定代表人 from 企业融资 as T1 join 企业 as T2 on T1.企业id = T2.词条id where T2.注册资本 > 1000000 group by T1.企业id
+
+index: 1949
+db_id: 企业融资
+hard pred: select T2.法定代表人 , min ( T1.融资额 ) from 投资公司 as T1 join 企业 as T2 on T1.企业id == T2.词条id where T2.注册资本 >= 10000000 group by T1.企业id
+hard gold: select T2.中文名 , min ( T1.融资总额 ) , T2.法定代表人 from 企业融资 as T1 join 企业 as T2 on T1.企业id = T2.词条id where T2.注册资本 >= 1000000 group by T1.企业id
+
+index: 1950
+db_id: 企业融资
+hard pred: select T2.法定代表人 , max ( T1.融资额 ) from 投资公司 as T1 join 企业 as T2 on T1.企业id == T2.词条id where T2.注册资本 > 1000000 group by T1.企业id
+hard gold: select T2.中文名 , max ( T1.融资总额 ) , T2.法定代表人 from 企业融资 as T1 join 企业 as T2 on T1.企业id = T2.词条id where T2.注册资本 > 1000000 group by T1.企业id
+
+index: 1956
+db_id: 打车软件
+hard pred: select T2.名称 , min ( T1.车数量 ) from 各打车APP支持的方式 as T1 join 打车方式 as T2 on T1.方式id == T2.词条id where T2.每公里价格 > 12000 and T1.每日打车单数 * T1.车数量 < 100000 group by T1.方式id
+hard gold: select T2.名称 , min ( T1.车数量 ) from 各打车APP支持的方式 as T1 join 打车方式 as T2 on T1.方式id = T2.词条id where T2.每公里价格 > 12 group by T1.方式id having sum ( T1.每日打车单数 ) < 100000
+
+index: 1960
+db_id: 洗衣机
+hard pred: select T2.名称 , sum ( T1.门店数量 ) from 洗衣机品牌门店 as T1 join 洗衣机品牌 as T2 on T1.品牌id == T2.词条id where T2.市场份额 >= 0.102 group by T1.品牌id having sum ( T1.售卖量 ) <= 100000
+hard gold: select T2.名称 , avg ( T1.门店数量 ) from 洗衣机品牌门店 as T1 join 洗衣机品牌 as T2 on T1.品牌id = T2.词条id where T2.市场份额 >= 0.102 group by T1.品牌id having sum ( T1.售卖量 ) <= 100000
+
+index: 1981
+db_id: 打车软件
+medium pred: select T2.理念 , T2.app名称 , sum ( T1.车数量 ) from 各打车APP支持的方式 as T1 join 打车方式 as T2 on T1.方式id == T2.词条id group by T1.方式id
+medium gold: select T2.理念 , T2.名称 , sum ( T1.车数量 ) from 各打车APP支持的方式 as T1 join 打车方式 as T2 on T1.方式id = T2.词条id group by T1.方式id
+
+index: 1982
+db_id: 打车软件
+medium pred: select T2.理念 , T2.app名称 , avg ( T1.车数量 ) from 各打车APP支持的方式 as T1 join 打车方式 as T2 on T1.方式id == T2.词条id group by T1.方式id
+medium gold: select T2.理念 , T2.名称 , avg ( T1.车数量 ) from 各打车APP支持的方式 as T1 join 打车方式 as T2 on T1.方式id = T2.词条id group by T1.方式id
+
+index: 1985
+db_id: 洗衣机
+medium pred: select T2.名称 , T2.所属公司 , avg ( T1.售卖量 ) from 洗衣机品牌门店 as T1 join 洗衣机品牌 as T2 on T1.品牌id == T2.词条id group by T1.品牌id
+medium gold: select T2.所属公司 , T2.名称 , avg ( T1.售价 ) from 洗衣机型号 as T1 join 洗衣机品牌 as T2 on T1.品牌id = T2.词条id group by T1.品牌id
+
+index: 1986
+db_id: 洗衣机
+medium pred: select 名称 , 所属公司 , `2018年营业额` from 洗衣机品牌 order by 市场份额 desc limit 5
+medium gold: select T2.所属公司 , T2.名称 , max ( T1.售价 ) from 洗衣机型号 as T1 join 洗衣机品牌 as T2 on T1.品牌id = T2.词条id group by T1.品牌id
+
+index: 1987
+db_id: 洗衣机
+medium pred: select 所属公司 , min ( 门店数量 ) from 洗衣机品牌门店 group by 所属公司
+medium gold: select T2.所属公司 , T2.名称 , min ( T1.门店数量 ) from 洗衣机品牌门店 as T1 join 洗衣机品牌 as T2 on T1.品牌id = T2.词条id group by T1.品牌id
+
+index: 1988
+db_id: 洗衣机
+medium pred: select 所属公司 , count ( * ) from 洗衣机品牌 group by 所属公司
+medium gold: select T2.所属公司 , T2.名称 , sum ( T1.门店数量 ) from 洗衣机品牌门店 as T1 join 洗衣机品牌 as T2 on T1.品牌id = T2.词条id group by T1.品牌id
+
+index: 1989
+db_id: 洗衣机
+medium pred: select 所属公司 , avg ( 门店数量 ) from 洗衣机品牌门店 group by 所属公司
+medium gold: select T2.所属公司 , T2.名称 , avg ( T1.门店数量 ) from 洗衣机品牌门店 as T1 join 洗衣机品牌 as T2 on T1.品牌id = T2.词条id group by T1.品牌id
+
+index: 1990
+db_id: 洗衣机
+medium pred: select 所属公司 , max ( 门店数量 ) from 洗衣机品牌门店 group by 所属公司
+medium gold: select T2.所属公司 , T2.名称 , max ( T1.门店数量 ) from 洗衣机品牌门店 as T1 join 洗衣机品牌 as T2 on T1.品牌id = T2.词条id group by T1.品牌id
+
+index: 1991
+db_id: 企业融资
+medium pred: select 法定代表人 , sum ( 融资总额 ) from 企业融资 group by 法定代表人
+medium gold: select T2.法定代表人 , T2.中文名 , sum ( T1.融资总额 ) from 企业融资 as T1 join 企业 as T2 on T1.企业id = T2.词条id group by T1.企业id
+
+index: 1992
+db_id: 企业融资
+medium pred: select max ( 融资总额 ) , 法定代表人 from 企业融资 group by 法定代表人
+medium gold: select T2.法定代表人 , T2.中文名 , max ( T1.融资总额 ) from 企业融资 as T1 join 企业 as T2 on T1.企业id = T2.词条id group by T1.企业id
+
+index: 1993
+db_id: 企业融资
+medium pred: select 法定代表人 , min ( 融资总额 ) from 企业融资 group by 法定代表人
+medium gold: select T2.法定代表人 , T2.中文名 , min ( T1.融资总额 ) from 企业融资 as T1 join 企业 as T2 on T1.企业id = T2.词条id group by T1.企业id
+
+index: 1994
+db_id: 企业融资
+medium pred: select 法定代表人 , avg ( 融资总额 ) from 企业融资 group by 法定代表人
+medium gold: select T2.法定代表人 , T2.中文名 , avg ( T1.融资总额 ) from 企业融资 as T1 join 企业 as T2 on T1.企业id = T2.词条id group by T1.企业id
+
+index: 2005
+db_id: 欧洲杯球队
+medium pred: select T2.所属地区 , T2.中文队名 , count ( * ) from 球队欧冠赛事 as T1 join 球队 as T2 on T1.球队id == T2.词条id group by T1.球队id
+medium gold: select T2.所属地区 , T2.中文队名 , sum ( T1.届数 ) from 球队欧冠赛事 as T1 join 球队 as T2 on T1.球队id = T2.词条id group by T1.球队id
+
+index: 2007
+db_id: 运动员比赛记录
+medium pred: select T2.场上位置 , T2.中文名 , max ( T1.出场次数 ) from 比赛记录 as T1 join 篮球运动员 as T2 on T1.球队 == T2.词条id group by T1.球队
+medium gold: select T2.场上位置 , T2.中文名 , max ( T1.出场次数 ) from 比赛记录 as T1 join 篮球运动员 as T2 on T1.球员id = T2.词条id group by T1.球员id
+
+index: 2009
+db_id: 运动员比赛记录
+medium pred: select T2.场上位置 , T2.中文名 , count ( * ) from 比赛记录 as T1 join 篮球运动员 as T2 on T1.球队 == T2.球队 group by T1.球队
+medium gold: select T2.场上位置 , T2.中文名 , sum ( T1.出场次数 ) from 比赛记录 as T1 join 篮球运动员 as T2 on T1.球员id = T2.词条id group by T1.球员id
+
+index: 2011
+db_id: CCTV中国经济年度人物
+medium pred: select T2.性别 , T2.姓名 from 人物公司职位 as T1 join 企业人物 as T2 on T1.人物id == T2.词条id
+medium gold: select T2.性别 , T2.姓名 from 历届经济人物获奖名单 as T1 join 企业人物 as T2 on T1.获奖人id = T2.词条id group by T1.获奖人id having count ( * ) = 5
+
+index: 2012
+db_id: 教材辅助参考书
+medium pred: select T2.名称 , T2.类型 from 适用城市 as T1 join 参考书 as T2 on T1.参考试卷id == T2.词条 and T1.版本 == '5'
+medium gold: select T2.类型 , T2.名称 from 参考试卷 as T1 join 参考书 as T2 on T1.试卷id = T2.词条id group by T1.试卷id having count ( * ) = 5
+
+index: 2014
+db_id: 洗衣机
+medium pred: select T2.名称 , T2.所属公司 from 洗衣机品牌门店 as T1 join 洗衣机品牌 as T2 on T1.品牌id == T2.词条id group by T1.品牌id having avg ( T1.平均售价 ) >= 1500
+medium gold: select T2.所属公司 , T2.名称 from 洗衣机型号 as T1 join 洗衣机品牌 as T2 on T1.品牌id = T2.词条id group by T1.品牌id having avg ( T1.售价 ) >= 1500
+
+index: 2017
+db_id: 欧洲杯球队
+medium pred: select 中文队名 , 所属地区 from 球队 where 词条id not in ( select 球队id from 球队欧冠赛事 group by 球队id having count ( * ) < 5 )
+medium gold: select T2.所属地区 , T2.中文队名 from 球队欧冠赛事 as T1 join 球队 as T2 on T1.球队id = T2.词条id group by T1.球队id having count ( * ) < 5
+
+index: 2018
+db_id: 欧洲杯球队
+medium pred: select T2.中文队名 , T2.所属地区 from 球队欧冠赛事 as T1 join 球队 as T2 on T1.球队id == T2.词条id group by T1.球队id having count ( * ) >= 5
+medium gold: select T2.所属地区 , T2.中文队名 from 球队欧冠赛事 as T1 join 球队 as T2 on T1.球队id = T2.词条id group by T1.球队id having avg ( T1.届数 ) >= 5
+
+index: 2023
+db_id: 欧洲杯球队
+medium pred: select T2.中文队名 , T2.所属地区 from 欧冠冠亚军 as T1 join 球队 as T2 on T1.冠军球队id == T2.词条id group by T1.冠军球队id having count ( * ) <= 5
+medium gold: select T2.所属地区 , T2.中文队名 from 欧冠冠亚军 as T1 join 球队 as T2 on T1.亚军球队id = T2.词条id group by T1.亚军球队id having count ( * ) <= 5
+
+index: 2030
+db_id: 企业融资
+medium pred: select T2.中文名 , T2.法定代表人 from 投资公司 as T1 join 企业 as T2 on T1.企业id == T2.词条id where T1.融资额 >= 6000000
+medium gold: select T2.法定代表人 , T2.中文名 from 投资公司 as T1 join 企业 as T2 on T1.企业id = T2.词条id group by T1.企业id having sum ( T1.融资额 ) >= 6000000
+
+index: 2034
+db_id: 企业融资
+medium pred: select T2.中文名 , T2.法定代表人 from 企业融资 as T1 join 企业 as T2 on T1.企业id == T2.词条id where T1.融资总额 > 1000000000 group by T1.企业id having count ( * ) <= 5
+medium gold: select T2.法定代表人 , T2.中文名 from 企业融资 as T1 join 企业 as T2 on T1.企业id = T2.词条id group by T1.企业id having sum ( T1.融资总额 ) > 1000000000
+
+index: 2035
+db_id: 企业融资
+medium pred: select 中文名 , 法定代表人 from 企业 where 注册资本 - 融资总额 < 1000000000
+medium gold: select T2.法定代表人 , T2.中文名 from 企业融资 as T1 join 企业 as T2 on T1.企业id = T2.词条id group by T1.企业id having sum ( T1.融资总额 ) < 1000000000
+
+index: 2036
+db_id: 运动员比赛记录
+medium pred: select 中文名 场上位置 from 篮球运动员 where 出场次数 >= 10
+medium gold: select T2.场上位置 , T2.中文名 from 比赛记录 as T1 join 篮球运动员 as T2 on T1.球员id = T2.词条id group by T1.球员id having avg ( T1.出场次数 ) >= 10
+
+index: 2038
+db_id: 友好城市
+medium pred: select T2.城市 , T2.所属省 from 对口帮扶城市 as T1 join 城市 as T2 on T1.帮助城市id == T2.词条id group by T1.帮助城市id having count ( * ) <= 5
+medium gold: select T2.所属省份 , T2.城市 from 对口帮扶城市 as T1 join 城市 as T2 on T1.帮助城市id = T2.词条id group by T1.帮助城市id having count ( * ) <= 5
+
+index: 2039
+db_id: 友好城市
+medium pred: select T2.城市 , T2.所属省 from 对口帮扶城市 as T1 join 城市 as T2 on T1.贫困城市id == T2.词条id group by T1.贫困城市id having count ( * ) >= 5
+medium gold: select T2.所属省份 , T2.城市 from 对口帮扶城市 as T1 join 城市 as T2 on T1.帮助城市id = T2.词条id group by T1.帮助城市id having count ( * ) >= 5
+
+index: 2047
+db_id: 奥运会参赛队伍
+medium pred: select 举办国家id , avg ( 参赛国家数量 ) from 夏季奥运会 group by 举办国家id having sum ( 大项项目数 ) < 101
+medium gold: select T2.名称 , avg ( T1.参赛国家数量 ) from 夏季奥运会 as T1 join 国家 as T2 on T1.举办国家id = T2.词条id group by T1.举办国家id having sum ( T1.小项项目数 ) < 100
+
+index: 2048
+db_id: 购书平台
+medium pred: select T2.书名 , avg ( T1.售价 ) from 图书与平台 as T1 join 图书 as T2 on T1.书名id == T2.词条id group by T1.书名 having count ( * ) > 100
+medium gold: select T2.书名 , avg ( T1.售价 ) from 图书与平台 as T1 join 图书 as T2 on T1.书名id = T2.词条id group by T1.书名id having sum ( T1.收藏人数 ) > 100
+
+index: 2052
+db_id: 打车软件
+medium pred: select avg ( 车数量 ) , max ( 每日打车单数 ) from 各打车APP支持的方式
+medium gold: select T2.名称 , avg ( T1.车数量 ) from 各打车APP支持的方式 as T1 join 打车方式 as T2 on T1.方式id = T2.词条id group by T1.方式id having sum ( T1.每日打车单数 ) <= 100
+
+index: 2053
+db_id: 打车软件
+medium pred: select sum ( 车数量 ) , min ( 每日打车单数 ) from 各打车APP支持的方式
+medium gold: select T2.名称 , sum ( T1.车数量 ) from 各打车APP支持的方式 as T1 join 打车方式 as T2 on T1.方式id = T2.词条id group by T1.方式id having count ( * ) >= 5
+
+index: 2060
+db_id: 购书平台
+medium pred: select T2.名称 , max ( T1.售价 ) from 图书与平台 as T1 join 平台 as T2 on T1.平台id == T2.词条id group by T1.平台id having count ( * ) <= 100
+medium gold: select T2.名称 , max ( T1.售价 ) from 图书与平台 as T1 join 平台 as T2 on T1.平台id = T2.词条id group by T1.平台id having sum ( T1.加入购物车人数 ) <= 100
+
+index: 2064
+db_id: 打车软件
+medium pred: select T2.app名称 , sum ( T1.市场份额 ) from 打车软件开通城市 as T1 join 打车APP as T2 on T1.appid == T2.词条id group by T1.appid having count ( * ) < 5
+medium gold: select T2.app名称 , sum ( T1.占所在城市份额 ) from 打车软件开通城市 as T1 join 打车APP as T2 on T1.appid = T2.词条id group by T1.appid having count ( * ) < 5
+
+index: 2077
+db_id: 综艺节目
+medium pred: select T2.节目名称 , T2.系列名 from 收视率 as T1 join 综艺节目 as T2 on T1.节目id == T2.词条id group by T1.节目id having sum ( T1.收视率 ) > 0.003
+medium gold: select T2.节目名称 from 收视率 as T1 join 综艺节目 as T2 on T1.节目id = T2.词条id group by T1.节目id having sum ( T1.收视份额 ) > 0.003
+
+index: 2082
+db_id: 中国高校
+medium pred: select T2.名称 , count ( * ) from 奖项 as T1 join 高校 as T2 on T1.高校id == T2.词条id group by T1.高校id
+medium gold: select T2.名称 , sum ( T1.奖项数量 ) from 奖项 as T1 join 高校 as T2 on T1.高校id = T2.词条id group by T1.高校id
+
+index: 2085
+db_id: 中国高校
+medium pred: select T2.名称 from 奖项 as T1 join 高校 as T2 on T1.高校id == T2.词条id group by T1.高校id having count ( * ) <= 30
+medium gold: select T2.名称 from 奖项 as T1 join 高校 as T2 on T1.高校id = T2.词条id group by T1.高校id having sum ( T1.奖项数量 ) >= 30
+
+index: 2098
+db_id: 综艺节目
+medium pred: select T2.节目名称 from 接档节目 as T1 join 综艺节目 as T2 on T1.节目id == T2.词条id group by T1.节目id having count ( * ) <= 5
+medium gold: select T2.节目名称 from 收视率 as T1 join 综艺节目 as T2 on T1.节目id = T2.词条id group by T1.节目id having count ( * ) <= 5
+
+index: 2106
+db_id: 综艺节目
+extra pred: select 系列名 from 综艺节目 order by 播出频道 asc limit 3
+extra gold: select T2.节目名称 from 收视率 as T1 join 综艺节目 as T2 on T1.节目id = T2.词条id where T2.系列名 = '欢乐喜剧人' group by T1.节目id order by count ( * ) asc limit 3
+
+index: 2115
+db_id: 坚果
+medium pred: select T2.名称 , T1.营养成分 from 每100克坚果营养成分 as T1 join 坚果 as T2 on T1.坚果id == T2.词条id
+medium gold: select 营养成分 , count ( * ) from 每100克坚果营养成分 group by 营养成分
+
+index: 2152
+db_id: 企业融资
+extra pred: select min ( 融资轮次 ) from 企业融资 where 年份 < 2010
+extra gold: select 融资轮次 from 企业融资 where 年份 < 2010 group by 融资轮次 order by count ( * ) asc limit 1
+
+index: 2169
+db_id: 教材辅助参考书
+extra pred: select 类型 from 参考书 where 适用阶段 != '1~`3年级`' group by 类型 order by count ( * ) desc limit 1
+extra gold: select 类型 from 参考书 where 适用年级 != '1-3' group by 类型 order by count ( * ) desc limit 1
+
+index: 2173
+db_id: 坚果
+medium pred: select max ( 世界人均摄入量 ) , 国家 from 坚果摄入量 where 人均摄入量 < 5 and 人均摄入量 != 0.05 group by 国家
+medium gold: select 国家 , max ( 世界人均摄入量 ) from 坚果摄入量 where 人均摄入量 != 0.05 group by 国家 having count ( * ) < 5
+
+index: 2177
+db_id: 运动员比赛记录
+medium pred: select T2.球队 , avg ( T1.抢断 ) from 比赛记录 as T1 join 篮球运动员 as T2 on T1.球员id == T2.词条id group by T1.球员id having count ( * ) < 40
+medium gold: select 球队 , avg ( 抢断 ) from 比赛记录 where 出场次数 < 40 group by 球队 having count ( * ) >= 5
+
+index: 2191
+db_id: 洗衣机
+medium pred: select 城市 , min ( 售卖量 ) from 洗衣机品牌门店 group by 城市 having count ( * ) != 5
+medium gold: select 城市 , min ( 售卖量 ) from 洗衣机品牌门店 where 门店数量 != 500 group by 城市 having count ( * ) = 5
+
+index: 2192
+db_id: 洗衣机
+medium pred: select 城市 , min ( 售卖量 ) from 洗衣机品牌门店 group by 城市 having count ( * ) < 5
+medium gold: select 城市 , min ( 售卖量 ) from 洗衣机品牌门店 where 门店数量 < 500 group by 城市 having count ( * ) = 5
+
+index: 2193
+db_id: 友好城市
+medium pred: select 所属省份 , min ( 国外驻华大使馆数量 ) from 城市 group by 所属省份 having sum ( 建交城市数量 ) <= 500 and count ( * ) <= 10
+medium gold: select 所属省份 , min ( 国外驻华大使馆数量 ) from 城市 where 建交国家数量 <= 10 group by 所属省份 having sum ( 建交城市数量 ) < 500
+
+index: 2194
+db_id: 友好城市
+medium pred: select 所属省 , avg ( 建交城市数量 ) , sum ( 留学生数量 ) from 城市 where 建交国家数量 <= 10 group by 所属省 having sum ( 留学生数量 ) <= 500
+medium gold: select 所属省份 , avg ( 建交城市数量 ) from 城市 where 建交国家数量 <= 10 group by 所属省份 having sum ( 留学生数量 ) <= 500
+
+index: 2199
+db_id: CCTV中国经济年度人物
+medium pred: select min ( 年龄 ) , avg ( 年龄 ) from 企业人物 where 性别 == '男'
+medium gold: select 性别 , min ( 年龄 ) from 企业人物 group by 性别
+
+index: 2200
+db_id: CCTV中国经济年度人物
+medium pred: select sum ( 年龄 ) , sum ( 年龄 ) from 企业人物 where 性别 == '男'
+medium gold: select 性别 , sum ( 年龄 ) from 企业人物 group by 性别
+
+index: 2203
+db_id: 企业融资
+medium pred: select count ( * ) from 企业融资 where 融资轮次 in ( select 融资轮次 from 企业融资 group by 融资轮次 order by count ( * ) asc limit 1 )
+medium gold: select 融资轮次 , min ( 融资总额 ) from 企业融资 group by 融资轮次
+
+index: 2204
+db_id: 企业融资
+medium pred: select avg ( 融资总额 ) from 企业融资
+medium gold: select 融资轮次 , avg ( 融资总额 ) from 企业融资 group by 融资轮次
+
+index: 2208
+db_id: 枪击事件
+medium pred: select min ( 受影响学生数量 ) from 美国近几年校园枪击事件
+medium gold: select 发生城市 , min ( 受影响学生数量 ) from 美国近几年校园枪击事件 group by 发生城市
+
+index: 2209
+db_id: 打车软件
+medium pred: select sum ( 市场份额 ) from 打车软件开通城市
+medium gold: select 城市 , sum ( 占所在城市份额 ) from 打车软件开通城市 group by 城市
+
+index: 2213
+db_id: 坚果
+medium pred: select 季节 , min ( 营业收入 ) from 坚果季节性营业收入 group by 季节 order by count ( * ) asc limit 1
+medium gold: select 季节 , min ( 营业收入 ) from 坚果季节性营业收入 group by 季节
+
+index: 2214
+db_id: 坚果
+medium pred: select 季节 , max ( 营业收入 ) from 坚果季节性营业收入 group by 季节 order by count ( * ) desc limit 1
+medium gold: select 季节 , max ( 营业收入 ) from 坚果季节性营业收入 group by 季节
+
+index: 2215
+db_id: 坚果
+medium pred: select sum ( 市场占比 ) from 坚果产地
+medium gold: select 产地 , sum ( 市场占比 ) from 坚果产地 group by 产地
+
+index: 2217
+db_id: 企业融资
+medium pred: select max ( 融资额 ) from 投资公司
+medium gold: select 投资公司 , max ( 融资额 ) from 投资公司 group by 投资公司
+
+index: 2218
+db_id: 打车软件
+medium pred: select max ( 覆盖城市数 ) from 打车APP
+medium gold: select 所属公司 , max ( 覆盖城市数 ) from 打车APP group by 所属公司
+
+index: 2220
+db_id: 奥运会参赛队伍
+medium pred: select max ( 参赛国家数量 ) from 夏季奥运会
+medium gold: select 举办城市 , max ( 参赛国家数量 ) from 夏季奥运会 group by 举办城市
+
+index: 2221
+db_id: 奥运会参赛队伍
+medium pred: select count ( * ) from 夏季奥运会 where 参赛国家数量 == ( select min ( 参赛国家数量 ) from 夏季奥运会 )
+medium gold: select 举办城市 , min ( 参赛国家数量 ) from 夏季奥运会 group by 举办城市
+
+index: 2222
+db_id: 运动员比赛记录
+medium pred: select max ( 年龄 ) from 篮球运动员
+medium gold: select 场上位置 , max ( 年龄 ) from 篮球运动员 group by 场上位置
+
+index: 2223
+db_id: 运动员比赛记录
+medium pred: select min ( 年龄 ) from 篮球运动员
+medium gold: select 场上位置 , min ( 年龄 ) from 篮球运动员 group by 场上位置
+
+index: 2224
+db_id: 洗衣机
+medium pred: select 城市 , avg ( 门店数量 ) from 洗衣机品牌门店 where 售卖量 < 50000 group by 城市
+medium gold: select 城市 , avg ( 门店数量 ) from 洗衣机品牌门店 group by 城市
+
+index: 2225
+db_id: 洗衣机
+medium pred: select 城市 , count ( * ) from 洗衣机品牌门店 where 门店数量 < 50000 group by 城市
+medium gold: select 城市 , sum ( 门店数量 ) from 洗衣机品牌门店 group by 城市
+
+index: 2228
+db_id: 友好城市
+medium pred: select 城市 , 建交国家数量 from 城市 order by 建交国家数量 asc limit 3
+medium gold: select 所属省份 , min ( 建交国家数量 ) from 城市 group by 所属省份
+
+index: 2232
+db_id: 洗衣机
+medium pred: select 名称 , avg ( 售价 ) from 洗衣机型号 group by 名称
+medium gold: select 产品类别 , avg ( 售价 ) from 洗衣机型号 group by 产品类别
+
+index: 2233
+db_id: 洗衣机
+medium pred: select min ( 售价 ) from 洗衣机型号
+medium gold: select 产品类别 , min ( 售价 ) from 洗衣机型号 group by 产品类别
+
+index: 2249
+db_id: 洗衣机
+easy pred: select 名称 from 洗衣机品牌 where 市场份额 > ( select avg ( 市场份额 ) from 洗衣机品牌 )
+easy gold: select 平台 from 洗衣机品牌平台评分 group by 平台 having count ( * ) < 5
+
+index: 2261
+db_id: 打车软件
+easy pred: select 城市 from 软件对租车的支持 where 是否支持租车 == '是' group by 城市 having count ( * ) < 5
+easy gold: select 城市 from 软件对租车的支持 group by 城市 having count ( * ) < 5
+
+index: 2280
+db_id: 奥运会参赛队伍
+medium pred: select 举办城市 , avg ( 参赛运动员数量 ) from 夏季奥运会 group by 举办城市 having count ( * ) >= 100
+medium gold: select 举办城市 , avg ( 参赛运动员数量 ) from 夏季奥运会 group by 举办城市 having sum ( 参赛国家数量 ) >= 100
+
+index: 2285
+db_id: 洗衣机
+medium pred: select 平台 , min ( 功能得分 ) from 洗衣机品牌平台评分 group by 平台 having count ( * ) > 7
+medium gold: select 平台 , min ( 功能得分 ) from 洗衣机品牌平台评分 group by 平台 having sum ( 总评分 ) > 7
+
+index: 2286
+db_id: 友好城市
+medium pred: select 所属省份 from 城市 where 建交国家数量 >= 70 group by 所属省份 having avg ( 国外驻华大使馆数量 ) > 0
+medium gold: select 所属省份 , avg ( 国外驻华大使馆数量 ) from 城市 group by 所属省份 having sum ( 建交国家数量 ) >= 70
+
+index: 2297
+db_id: 洗衣机
+hard pred: select 城市 from 洗衣机品牌门店 group by 城市 order by count ( * ) asc limit 1
+hard gold: select 城市 from 洗衣机品牌门店 group by 城市 order by sum ( 门店数量 ) asc limit 1
+
+index: 2309
+db_id: 教材辅助参考书
+hard pred: select 名称 from 参考书 where 适用阶段 in ( select 适用阶段 from 参考书 group by 适用阶段 order by count ( * ) asc limit 1 )
+hard gold: select 类型 from 参考书 group by 类型 order by avg ( 适用年级 ) asc limit 1
+
+index: 2310
+db_id: 友好城市
+hard pred: select 所属省 from 城市 group by 所属省 order by count ( * ) asc limit 2
+hard gold: select 所属省 from 一带一路的中国城市 group by 所属省 order by count ( * ) asc limit 2
+
+index: 2323
+db_id: 欧洲杯球队
+hard pred: select 所属地区 from 球队 group by 所属地区 order by count ( * ) asc limit 1
+hard gold: select 所属地区 from 球队 group by 所属地区 order by sum ( 容纳人数 ) asc limit 1
+
+index: 2339
+db_id: 教材辅助参考书
+hard pred: select 类型 , min ( 价格 ) from 参考书 group by 类型 order by avg ( 适用阶段 ) asc limit 5
+hard gold: select 类型 , min ( 价格 ) from 参考书 group by 类型 order by avg ( 适用年级 ) desc limit 5
+
+index: 2340
+db_id: 教材辅助参考书
+hard pred: select 类型 , avg ( 适用阶段 ) from 参考书 group by 类型 order by count ( * ) asc limit 1
+hard gold: select 类型 , avg ( 适用年级 ) from 参考书 group by 类型 order by count ( * ) asc limit 1
+
+index: 2341
+db_id: 教材辅助参考书
+hard pred: select 类型 , sum ( 适用阶段 ) from 参考书 group by 类型 order by count ( * ) asc limit 1
+hard gold: select 类型 , sum ( 适用年级 ) from 参考书 group by 类型 order by count ( * ) asc limit 1
+

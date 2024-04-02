@@ -237,7 +237,7 @@ def eval_exec_match(
             # we should expect the gold to be succesfully executed on the database
             assert (
                 g_flag != "exception"
-            ), "gold query %s has error on database file %s" % (g_str, db_path)
+            ), "%s ||| gold query %s has error on database file %s" % (g_denotation, g_str, db_path)
 
             # wrong if execution fails
             if p_flag == "exception":

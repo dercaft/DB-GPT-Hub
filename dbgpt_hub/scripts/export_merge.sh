@@ -1,11 +1,14 @@
 # llama2 series
 python dbgpt_hub/train/export_model.py \
-    --model_name_or_path /home/LLM/CodeLlama-13b-Instruct-hf \
+    --model_name_or_path defog/sqlcoder-7b-2 \
     --template llama2 \
     --finetuning_type lora \
-    --checkpoint_dir dbgpt_hub/output/adapter/CodeLlama-13b-sql-lora \
-    --output_dir dbgpt_hub/output/codellama-13b-sql-sft \
+    --checkpoint_dir dbgpt_hub/output/adapter/sqlcoder-sql-lora \
+    --output_dir dbgpt_hub/output/sqlcoder-sql-sft \
     --fp16
+# --model_name_or_path defog/sqlcoder-7b-2 /mnt/store/llama2-checkpoints-plus-sft-v3/checkpoint-14000/
+# --checkpoint_dir dbgpt_hub/output/adapter/sqlcoder-sql-lora        dbgpt_hub/output/adapter/Siyuan-sql-lora
+# --output_dir dbgpt_hub/output/sqlcoder-sql-sft        dbgpt_hub/output/Siyuan-sql-sft
 
 
 ## Baichuan2
